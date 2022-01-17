@@ -1,1 +1,44 @@
-/Users/etretiakov/src/deciphering-role-of-onecut3-transcription-factor-in-cell-fate-decisions/code/genes.R
+npr <- c("Oxtr",  "Avpr1a", "Avpr1b", "Avpr2",
+         "Tacr1", "Mc1r", "Mc3r", "Mc4r", "Oprl1",  "Tacr3",
+         "Gpr83", "Galr1", "Npy1r", "Npy2r", "Npy4r", "Npy4r2", "Npy5r",
+         "Sstr1", "Sstr2", "Sstr3", "Mchr1",  "Oprd1", "Oprk1", "Oprm1",
+         "Trhr", "Hcrtr1", "Hcrtr2", "Qrfpr",   "Npffr1", "Npffr2",
+         "Prlhr",  "Ghr", "Ghrhr",  "Grpr", "Vipr1", "Vipr2", "Prokr2",
+         "Nmur2",  "Nmur1", "Nmbr",  "Kiss1r", "Crhr1", "Crhr2",
+         "Cntfr", "Cckar", "Cckbr", "Galr3")
+
+np <- c("Adcyap1", "Oxt", "Avp", "Tac1", "Pomc", "Pnoc", "Tac2",
+        "Nts", "Gal", "Agrp", "Npy", "Sst", "Cartpt", "Pmch",
+        "Reln", "Rxfp1", "Penk", "Pdyn", "Trh", "Hcrt", "Qrfp",
+        "Npw", "Npvf", "Ghrh", "Grp", "Vip", "Nms", "Nmu", "Nmb",
+        "Kiss1", "Crh", "Bdnf", "Cntf", "Cck")
+
+irs_genes <- c("Alk", "Insr", "Ltk", "Igf1r", "Irs1",
+               "Ptn", "Mdk", "Fam150a", "Fam150b",
+               "Mc4r", "Lepr", "Sim1", "Lmo4",
+               "Slc2a1", "Slc2a3")
+
+neurotrans <- c("Slc17a6", "Slc17a7", "Slc17a8", "Slc1a1", "Slc1a2", "Slc1a6",
+                "Gad1", "Slc32a1", "Slc6a1")
+glut       <- c("Slc17a6", "Slc17a7", "Slc17a8", "Slc1a1", "Slc1a2", "Slc1a6")
+glutr      <- c("Gria1", "Gria2", "Gria3", "Gria4", # iGlu AMPA receptors
+                "Grid1", "Grid2", # iGlu delta receptors
+                "Grik1", "Grik2", "Grik3", "Grik4", "Grik5", # iGlu kainate receptors
+                "Grin1", "Grin2a", "Grin2b", "Grin2c", "Grin2d", "Grin3a", "Grin3b", # iGlu NMDA receptors
+                "Grm1", "Grm5", # mGluRs 1
+                "Grm2", "Grm3", # mGluRs 2
+                "Grm4", "Grm6", "Grm7", "Grm8"# mGluRs 3
+                )
+gaba       <- c("Gad1", "Gad2", "Slc32a1", "Slc6a1")
+gabar <- c(
+    "Gabra1", "Gabra2", "Gabra3", "Gabra4", "Gabra5", "Gabra6",
+    "Gabrb1", "Gabrb2", "Gabrb3",
+    "Gabrg1", "Gabrg2", "Gabrg3",
+    "Gabrd", "Gabre", "Gabrp", "Gabrq",
+    "Gabrr1", "Gabrr2", "Gabrr3",
+    "Gabbr1", "Gabbr2"
+)
+dopam      <- c("Th", "Slc6a3", "Slc18a2", "Ddc",  "Slc18a3")
+ach        <- c("Chat", "Slc18a3", "Ache", "Slc5a7")
+bh4        <- c("Gch1",  "Qdpr", "Dhfr", "Pts", "Spr", "Pcbd1", "Pcbd2")
+gene_int   <- c(npr, np, irs_genes, neurotrans, glut, glutr, gaba, dopam, ach, bh4) %>% unique()
