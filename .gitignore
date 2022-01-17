@@ -4,6 +4,15 @@
 
 # Session Data files
 .RData
+.Ruserdata
+.DS_Store
+analysis/figure
+analysis/*png
+analysis/*html
+analysis/*_cache
+analysis/site_libs
+data/*rds
+data/*h5seurat
 
 # User-specific files
 .Ruserdata
