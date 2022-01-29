@@ -238,8 +238,14 @@ Make splits of neurons by neurotransmitter signature
 ```{r derive-subsets-by-neurotransmitter}
 oc3_fin$status <- oc3_fin$gaba_status %>%
   if_else(true = "GABAergic",
-          false = "glutamatergic")
+    false = "glutamatergic")
 Idents(oc3_fin) <- "status"
+SaveH5Seurat(
+  object    = oc3_fin,
+  filename  = here(data_dir, "oc3_fin"),
+  overwrite = TRUE,
+  verbose   = TRUE
+)
 
 ## Split on basis of neurotrans and test for difference
 oc3_fin_neurotrans <- SplitObject(oc3_fin, split.by = "status")
