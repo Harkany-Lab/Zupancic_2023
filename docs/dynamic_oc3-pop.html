@@ -468,16 +468,16 @@ This reproducible <a href="https://rmarkdown.rstudio.com">R Markdown</a> analysi
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomEugOTZupancic2022tree6a77e95d62e71bb92e766f552b45cccfc254c23etargetblank6a77e95a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/EugOT/Zupancic_2022/tree/6a77e95d62e71bb92e766f552b45cccfc254c23e" target="_blank">6a77e95</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomEugOTZupancic2022tree1df6d48261e1a1c70a011db219336c3ce3168c69targetblank1df6d48a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/EugOT/Zupancic_2022/tree/1df6d48261e1a1c70a011db219336c3ce3168c69" target="_blank">1df6d48</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomEugOTZupancic2022tree6a77e95d62e71bb92e766f552b45cccfc254c23etargetblank6a77e95a" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomEugOTZupancic2022tree1df6d48261e1a1c70a011db219336c3ce3168c69targetblank1df6d48a" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility.
 </p>
 <p>
-The results in this page were generated with repository version <a href="https://github.com/EugOT/Zupancic_2022/tree/6a77e95d62e71bb92e766f552b45cccfc254c23e" target="_blank">6a77e95</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
+The results in this page were generated with repository version <a href="https://github.com/EugOT/Zupancic_2022/tree/1df6d48261e1a1c70a011db219336c3ce3168c69" target="_blank">1df6d48</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
 </p>
 <p>
 Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
@@ -526,6 +526,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/EugOT/Zupancic_2022/blob/1df6d48261e1a1c70a011db219336c3ce3168c69/analysis/dynamic_oc3-pop.Rmd" target="_blank">1df6d48</a>
+</td>
+<td>
+EugOT
+</td>
+<td>
+2022-01-29
+</td>
+<td>
+wflow_publish(“*“)
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/EugOT/Zupancic_2022/d106e47185a9b836156cab167df844bb9d1b3ebb/docs/dynamic_oc3-pop.html" target="_blank">d106e47</a>
+</td>
+<td>
+EugOT
+</td>
+<td>
+2022-01-29
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -804,44 +838,7 @@ walk2(n_corrs, p_corrs, save_my_plot, type = &quot;stat-corr-plt&quot;)
   nintersects = 60,
   empty.intersections = &quot;on&quot;
 )</code></pre>
-<p><img src="figure/dynamic_oc3-pop.Rmd/plot-upset-oc3-1.png" width="672" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-plot-upset-oc3-1">
-Past versions of plot-upset-oc3-1.png
-</button>
-</p>
-<div id="fig-plot-upset-oc3-1" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/EugOT/Zupancic_2022/blob/6a77e95d62e71bb92e766f552b45cccfc254c23e/docs/figure/dynamic_oc3-pop.Rmd/plot-upset-oc3-1.png" target="_blank">6a77e95</a>
-</td>
-<td>
-EugOT
-</td>
-<td>
-2022-01-29
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
+<p><img src="figure/dynamic_oc3-pop.Rmd/plot-upset-oc3-1.svg" width="672" style="display: block; margin: auto;" /></p>
 <p>Regroup factor by stages for more balanced groups</p>
 <pre class="r"><code>onecut3$age %&gt;% forcats::fct_count()
 # # A tibble: 6 × 2
@@ -939,44 +936,7 @@ oc3_fin_ages       &lt;- SplitObject(oc3_fin, split.by = &quot;age&quot;)</code>
         cols = c(&quot;#adffff&quot;, &quot;#0084ff&quot;),
         col.min = -1, col.max = 1
 ) + RotatedAxis()</code></pre>
-<p><img src="figure/dynamic_oc3-pop.Rmd/plot-dotplot-age-gabar-gaba-1.png" width="672" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-plot-dotplot-age-gabar-gaba-1">
-Past versions of plot-dotplot-age-gabar-gaba-1.png
-</button>
-</p>
-<div id="fig-plot-dotplot-age-gabar-gaba-1" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/EugOT/Zupancic_2022/blob/6a77e95d62e71bb92e766f552b45cccfc254c23e/docs/figure/dynamic_oc3-pop.Rmd/plot-dotplot-age-gabar-gaba-1.png" target="_blank">6a77e95</a>
-</td>
-<td>
-EugOT
-</td>
-<td>
-2022-01-29
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
+<p><img src="figure/dynamic_oc3-pop.Rmd/plot-dotplot-age-gabar-gaba-1.svg" width="672" style="display: block; margin: auto;" /></p>
 <p>Expression of GABA receptors in glutamatergic Onecut3 positive cells</p>
 <pre class="r"><code>DotPlot(object = oc3_fin_neurotrans$glutamatergic,
         features = gabar,
@@ -984,44 +944,7 @@ EugOT
         cols = c(&quot;#ffc2c2&quot;, &quot;#ff3c00&quot;),
         col.min = -1, col.max = 1
 ) + RotatedAxis()</code></pre>
-<p><img src="figure/dynamic_oc3-pop.Rmd/plot-dotplot-age-gabar-glu-1.png" width="672" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-plot-dotplot-age-gabar-glu-1">
-Past versions of plot-dotplot-age-gabar-glu-1.png
-</button>
-</p>
-<div id="fig-plot-dotplot-age-gabar-glu-1" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/EugOT/Zupancic_2022/blob/6a77e95d62e71bb92e766f552b45cccfc254c23e/docs/figure/dynamic_oc3-pop.Rmd/plot-dotplot-age-gabar-glu-1.png" target="_blank">6a77e95</a>
-</td>
-<td>
-EugOT
-</td>
-<td>
-2022-01-29
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
+<p><img src="figure/dynamic_oc3-pop.Rmd/plot-dotplot-age-gabar-glu-1.svg" width="672" style="display: block; margin: auto;" /></p>
 <p>Expression of glutamate receptors in GABAergic Onecut3 positive cells</p>
 <pre class="r"><code>DotPlot(object = oc3_fin_neurotrans$GABAergic,
         features = glutr,
@@ -1029,44 +952,7 @@ EugOT
         cols = c(&quot;#adffff&quot;, &quot;#0084ff&quot;),
         col.min = -1, col.max = 1
 ) + RotatedAxis()</code></pre>
-<p><img src="figure/dynamic_oc3-pop.Rmd/plot-dotplot-age-glur-gaba-1.png" width="672" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-plot-dotplot-age-glur-gaba-1">
-Past versions of plot-dotplot-age-glur-gaba-1.png
-</button>
-</p>
-<div id="fig-plot-dotplot-age-glur-gaba-1" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/EugOT/Zupancic_2022/blob/6a77e95d62e71bb92e766f552b45cccfc254c23e/docs/figure/dynamic_oc3-pop.Rmd/plot-dotplot-age-glur-gaba-1.png" target="_blank">6a77e95</a>
-</td>
-<td>
-EugOT
-</td>
-<td>
-2022-01-29
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
+<p><img src="figure/dynamic_oc3-pop.Rmd/plot-dotplot-age-glur-gaba-1.svg" width="672" style="display: block; margin: auto;" /></p>
 <p>Expression of glutamate receptors in glutamatergic Onecut3 positive cells</p>
 <pre class="r"><code>DotPlot(object = oc3_fin_neurotrans$glutamatergic,
         features = glutr,
@@ -1074,44 +960,7 @@ EugOT
         cols = c(&quot;#ffc2c2&quot;, &quot;#ff3c00&quot;),
         col.min = -1, col.max = 1
 ) + RotatedAxis()</code></pre>
-<p><img src="figure/dynamic_oc3-pop.Rmd/plot-dotplot-age-glur-glu-1.png" width="672" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-plot-dotplot-age-glur-glu-1">
-Past versions of plot-dotplot-age-glur-glu-1.png
-</button>
-</p>
-<div id="fig-plot-dotplot-age-glur-glu-1" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/EugOT/Zupancic_2022/blob/6a77e95d62e71bb92e766f552b45cccfc254c23e/docs/figure/dynamic_oc3-pop.Rmd/plot-dotplot-age-glur-glu-1.png" target="_blank">6a77e95</a>
-</td>
-<td>
-EugOT
-</td>
-<td>
-2022-01-29
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
+<p><img src="figure/dynamic_oc3-pop.Rmd/plot-dotplot-age-glur-glu-1.svg" width="672" style="display: block; margin: auto;" /></p>
 </div>
 <div id="dotplots-grouped-by-stage" class="section level2">
 <h2>DotPlots grouped by stage</h2>
@@ -1122,44 +971,7 @@ EugOT
         cols = c(&quot;#adffff&quot;, &quot;#0084ff&quot;),
         col.min = -1, col.max = 1
 ) + RotatedAxis()</code></pre>
-<p><img src="figure/dynamic_oc3-pop.Rmd/plot-dotplot-stage-gabar-gaba-1.png" width="672" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-plot-dotplot-stage-gabar-gaba-1">
-Past versions of plot-dotplot-stage-gabar-gaba-1.png
-</button>
-</p>
-<div id="fig-plot-dotplot-stage-gabar-gaba-1" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/EugOT/Zupancic_2022/blob/6a77e95d62e71bb92e766f552b45cccfc254c23e/docs/figure/dynamic_oc3-pop.Rmd/plot-dotplot-stage-gabar-gaba-1.png" target="_blank">6a77e95</a>
-</td>
-<td>
-EugOT
-</td>
-<td>
-2022-01-29
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
+<p><img src="figure/dynamic_oc3-pop.Rmd/plot-dotplot-stage-gabar-gaba-1.svg" width="672" style="display: block; margin: auto;" /></p>
 <p>Expression of GABA receptors in glutamatergic Onecut3 positive cells</p>
 <pre class="r"><code>DotPlot(object = oc3_fin_neurotrans$glutamatergic,
         features = gabar,
@@ -1167,44 +979,7 @@ EugOT
         cols = c(&quot;#ffc2c2&quot;, &quot;#ff3c00&quot;),
         col.min = -1, col.max = 1
 ) + RotatedAxis()</code></pre>
-<p><img src="figure/dynamic_oc3-pop.Rmd/plot-dotplot-stage-gabar-glu-1.png" width="672" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-plot-dotplot-stage-gabar-glu-1">
-Past versions of plot-dotplot-stage-gabar-glu-1.png
-</button>
-</p>
-<div id="fig-plot-dotplot-stage-gabar-glu-1" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/EugOT/Zupancic_2022/blob/6a77e95d62e71bb92e766f552b45cccfc254c23e/docs/figure/dynamic_oc3-pop.Rmd/plot-dotplot-stage-gabar-glu-1.png" target="_blank">6a77e95</a>
-</td>
-<td>
-EugOT
-</td>
-<td>
-2022-01-29
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
+<p><img src="figure/dynamic_oc3-pop.Rmd/plot-dotplot-stage-gabar-glu-1.svg" width="672" style="display: block; margin: auto;" /></p>
 <p>Expression of glutamate receptors in GABAergic Onecut3 positive cells</p>
 <pre class="r"><code>DotPlot(object = oc3_fin_neurotrans$GABAergic,
         features = glutr,
@@ -1212,44 +987,7 @@ EugOT
         cols = c(&quot;#adffff&quot;, &quot;#0084ff&quot;),
         col.min = -1, col.max = 1
 ) + RotatedAxis()</code></pre>
-<p><img src="figure/dynamic_oc3-pop.Rmd/plot-dotplot-stage-glur-gaba-1.png" width="672" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-plot-dotplot-stage-glur-gaba-1">
-Past versions of plot-dotplot-stage-glur-gaba-1.png
-</button>
-</p>
-<div id="fig-plot-dotplot-stage-glur-gaba-1" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/EugOT/Zupancic_2022/blob/6a77e95d62e71bb92e766f552b45cccfc254c23e/docs/figure/dynamic_oc3-pop.Rmd/plot-dotplot-stage-glur-gaba-1.png" target="_blank">6a77e95</a>
-</td>
-<td>
-EugOT
-</td>
-<td>
-2022-01-29
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
+<p><img src="figure/dynamic_oc3-pop.Rmd/plot-dotplot-stage-glur-gaba-1.svg" width="672" style="display: block; margin: auto;" /></p>
 <p>Expression of glutamate receptors in glutamatergic Onecut3 positive cells</p>
 <pre class="r"><code>DotPlot(object = oc3_fin_neurotrans$glutamatergic,
         features = glutr,
@@ -1257,44 +995,7 @@ EugOT
         cols = c(&quot;#ffc2c2&quot;, &quot;#ff3c00&quot;),
         col.min = -1, col.max = 1
 ) + RotatedAxis()</code></pre>
-<p><img src="figure/dynamic_oc3-pop.Rmd/plot-dotplot-stage-glur-glu-1.png" width="672" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-plot-dotplot-stage-glur-glu-1">
-Past versions of plot-dotplot-stage-glur-glu-1.png
-</button>
-</p>
-<div id="fig-plot-dotplot-stage-glur-glu-1" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/EugOT/Zupancic_2022/blob/6a77e95d62e71bb92e766f552b45cccfc254c23e/docs/figure/dynamic_oc3-pop.Rmd/plot-dotplot-stage-glur-glu-1.png" target="_blank">6a77e95</a>
-</td>
-<td>
-EugOT
-</td>
-<td>
-2022-01-29
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
+<p><img src="figure/dynamic_oc3-pop.Rmd/plot-dotplot-stage-glur-glu-1.svg" width="672" style="display: block; margin: auto;" /></p>
 <br>
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
