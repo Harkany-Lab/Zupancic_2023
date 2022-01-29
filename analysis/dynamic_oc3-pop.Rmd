@@ -1,0 +1,336 @@
+---
+title: "Onecut3 in mouse hypothalamus development"
+author: "Evgenii Tretiakov"
+date: "2021-01-28"
+output: workflowr::wflow_html
+---
+
+```{r setup, include=FALSE, echo=FALSE}
+knitr::opts_chunk$set(echo = TRUE, comment = "#", collapse = TRUE)
+```
+```{r load-packages}
+# Load tidyverse infrastructure packages
+library(here)
+library(tidyverse)
+library(magrittr)
+library(zeallot)
+library(future)
+
+# Load packages for scRNA-seq analysis and visualisation
+library(sctransform)
+library(Seurat)
+library(SeuratWrappers)
+library(SeuratDisk)
+library(UpSetR)
+library(patchwork)
+library(Nebulosa)
+```
+```{r set-paths}
+src_dir    <- here("code")
+data_dir   <- here("data")
+output_dir <- here("output")
+plots_dir  <- here(output_dir, "figures")
+tables_dir <- here(output_dir, "tables")
+```
+```{r load-functions}
+source(here(src_dir, "functions.R"))
+source(here(src_dir, "genes.R"))
+```
+```{r set-seed}
+reseed <- 42
+set.seed(seed = reseed)
+```
+```{r set-parallel-execution-plan}
+# available cores
+n_cores <- available_cores(prop2use = .5)
+# Parameters for parallel execution
+plan("multicore", workers = n_cores)
+options(future.globals.maxSize = Inf,
+        future.rng.onMisuse = "ignore")
+plan()
+```
+
+Read data
+```{r load-data}
+rar2020_ages_all     <- c("E15", "E17", "P00", "P02", "P10", "P23")
+rar2020_ages_postnat <-                      c("P02", "P10", "P23")
+samples_df <- read_tsv(here("data/samples.tsv"))
+colours_wtree <- setNames(read_lines(here(data_dir, "colours_wtree.tsv")),
+                          1:45)
+
+onecut  <- LoadH5Seurat(here(data_dir, "rar2020.srt.cont.oc2or3.raw.h5seurat"))
+onecut3 <- subset(onecut, subset = Onecut3 > 0)
+```
+
+Derive and filter matrix of Onecut3
+```{r derive-mtxs}
+mtx_oc3 <-
+    onecut3 %>%
+    GetAssayData("data", "RNA") %>%
+    as.data.frame() %>%
+    t()
+rownames(mtx_oc3) <- colnames(onecut3)
+
+# Filter features
+filt_low_genes <-
+    colSums(mtx_oc3) %>%
+    .[. > quantile(., 0.4)] %>%
+    names()
+mtx_oc3 %<>% .[, filt_low_genes]
+
+min_filt_vector <-
+    mtx_oc3 %>%
+    as_tibble() %>%
+    select(all_of(filt_low_genes)) %>%
+    summarise(across(.fns = ~ quantile(.x, .1))) %>%
+    as.list %>%
+    map(as.double) %>%
+    simplify %>%
+    .[colnames(mtx_oc3)]
+
+# Prepare table of intersection sets analysis
+content_mtx_oc3 <-
+    (mtx_oc3 > min_filt_vector) %>%
+    as_tibble() %>%
+    mutate_all(as.numeric)
+```
+
+Correlation analysis visualisation between different genes
+```{r plot-correlation-scatter}
+p_corrs <- list(
+    ggstatsplot::ggscatterstats(as.data.frame(mtx_oc3),
+        x = Onecut3,  y = Trh, xfill = "#ffc400", yfill = "#e22ee2"),
+    ggstatsplot::ggscatterstats(as.data.frame(mtx_oc3),
+        x = Slc32a1,  y = Onecut3,  xfill = "#0000da",   yfill = "#ffc400"),
+    ggstatsplot::ggscatterstats(as.data.frame(mtx_oc3),
+        x = Th,  y = Onecut3,  xfill = "#006eff",   yfill = "#ffc400"),
+    ggstatsplot::ggscatterstats(as.data.frame(mtx_oc3),
+        x = Slc32a1,  y = Trh, xfill = "#0000da",   yfill = "#e22ee2"),
+    ggstatsplot::ggscatterstats(as.data.frame(mtx_oc3),
+        x = Th,  y = Trh, xfill = "#006eff",   yfill = "#e22ee2"),
+    ggstatsplot::ggscatterstats(as.data.frame(mtx_oc3),
+        x = Slc32a1,  y = Th,  xfill = "#0000da",   yfill = "#006eff"),
+    ggstatsplot::ggscatterstats(as.data.frame(mtx_oc3),
+        y = Slc32a1,  x = Onecut3,  yfill = "#0000da",   xfill = "#ffc400"),
+    ggstatsplot::ggscatterstats(as.data.frame(mtx_oc3),
+        y = Th,  x = Onecut3,  yfill = "#006eff",   xfill = "#ffc400"),
+    ggstatsplot::ggscatterstats(as.data.frame(mtx_oc3),
+        y = Slc17a6,  x = Onecut3,  yfill = "#ff0000",   xfill = "#ffc400"),
+    ggstatsplot::ggscatterstats(as.data.frame(mtx_oc3),
+        y = Gad1,  x = Onecut3,  yfill = "#a50202",    xfill = "#ffc400"),
+    ggstatsplot::ggscatterstats(as.data.frame(mtx_oc3),
+        y = Gad2,  x = Onecut3,  yfill = "#4002a5",    xfill = "#ffc400"),
+    ggstatsplot::ggscatterstats(as.data.frame(mtx_oc3),
+        y = Onecut2,  x = Onecut3,  yfill = "#6402a5",    xfill = "#ffc400"),
+    ggstatsplot::ggscatterstats(as.data.frame(mtx_oc3),
+        y = Nav1,  x = Onecut3,  yfill = "#2502a5",    xfill = "#ffc400"),
+    ggstatsplot::ggscatterstats(as.data.frame(mtx_oc3),
+        y = Nav2,  x = Onecut3,  yfill = "#4002a5",    xfill = "#ffc400"),
+    ggstatsplot::ggscatterstats(as.data.frame(mtx_oc3),
+        y = Trio,  x = Onecut3,  yfill = "#2502a5",    xfill = "#ffc400")
+)
+n_corrs <- list(
+    "oc3-rna-data-Onecut3-Trh",
+    "oc3-rna-data-Slc32a1-Onecut3",
+    "oc3-rna-data-Th-Onecut3",
+    "oc3-rna-data-Slc32a1-Trh",
+    "oc3-rna-data-Th-Trh",
+    "oc3-rna-data-Slc32a1-Th",
+    "oc3-rna-data-Onecut3-Slc32a1",
+    "oc3-rna-data-Onecut3-Th",
+    "oc3-rna-data-Onecut3-Slc17a6",
+    "oc3-rna-data-Onecut3-Gad1",
+    "oc3-rna-data-Onecut3-Gad2",
+    "oc3-rna-data-Onecut3-Onecut2",
+    "oc3-rna-data-Onecut3-Nav1",
+    "oc3-rna-data-Onecut3-Nav2",
+    "oc3-rna-data-Onecut3-Trio"
+)
+
+walk2(n_corrs, p_corrs, save_my_plot, type = "stat-corr-plt")
+```
+
+Visualise intersections sets that we are going to use (highlighted)
+```{r plot-upset-oc3}
+upset(as.data.frame(content_mtx_oc3),
+  order.by = "freq",
+  sets.x.label = "Number of cells",
+  text.scale = c(2, 1.6, 2, 1.3, 2, 3),
+  nsets = 15,
+  sets = c("Gad1", "Gad2", "Slc32a1", "Slc17a6"),
+  queries = list(
+    list(
+      query = intersects,
+      params = list("Gad1", "Gad2", "Slc32a1"),
+      active = T
+    ),
+    list(
+      query = intersects,
+      params = list("Slc17a6"),
+      active = T
+    )
+  ),
+  nintersects = 60,
+  empty.intersections = "on"
+)
+```
+
+Regroup factor by stages for more balanced groups
+```{r derive-stages}
+onecut3$age %>% forcats::fct_count()
+onecut3$stage <-
+  onecut3$age %>%
+  forcats::fct_collapse(`Embrionic day 15` = "E15",
+                        `Embrionic day 17` = "E17",
+                        Neonatal = c("P00", "P02"),
+                        Postnatal = c("P10", "P23"))
+onecut3$stage %>% forcats::fct_count()
+```
+
+Make subset of stable neurons
+```{r derive-subset-def-cells}
+onecut3$gaba_status <-
+  content_mtx_oc3 %>%
+  select(Gad1, Gad2, Slc32a1) %>%
+  mutate(gaba = if_all(.fns = ~ .x > 0)) %>%
+  .$gaba
+
+onecut3$gaba_occurs <-
+  content_mtx_oc3 %>%
+  select(Gad1, Gad2, Slc32a1) %>%
+  mutate(gaba = if_any(.fns = ~ .x > 0)) %>%
+  .$gaba
+
+onecut3$glut_status <-
+  content_mtx_oc3 %>%
+  select(Slc17a6) %>%
+  mutate(glut = Slc17a6 > 0) %>%
+  .$glut
+
+oc3_fin <-
+  subset(onecut3,
+    cells = union(
+      WhichCells(onecut3,
+        expression = gaba_status == TRUE & glut_status == FALSE),
+      WhichCells(onecut3,
+        expression = glut_status == TRUE & gaba_occurs == FALSE)))
+```
+
+## Check contingency tables for neurotransmitter signature
+```{r check-contingency-neurotransmitter-test}
+oc3_fin@meta.data %>%
+  janitor::tabyl(glut_status, gaba_status)
+```
+
+By age
+```{r check-contingency-neurotransmitter-age}
+oc3_fin@meta.data %>%
+  janitor::tabyl(age, gaba_status)
+```
+
+By stage
+```{r check-contingency-neurotransmitter-stage}
+oc3_fin@meta.data %>%
+  janitor::tabyl(stage, gaba_status)
+```
+
+Make splits of neurons by neurotransmitter signature 
+```{r derive-subsets-by-neurotransmitter}
+oc3_fin$status <- oc3_fin$gaba_status %>%
+  if_else(true = "GABAergic",
+          false = "glutamatergic")
+Idents(oc3_fin) <- "status"
+
+## Split on basis of neurotrans and test for difference
+oc3_fin_neurotrans <- SplitObject(oc3_fin, split.by = "status")
+
+## Split on basis of age and test for difference
+oc3_fin_ages       <- SplitObject(oc3_fin, split.by = "age")
+```
+
+## DotPlots grouped by age
+Expression of GABA receptors in GABAergic Onecut3 positive cells
+```{r plot-dotplot-age-gabar-gaba}
+DotPlot(object = oc3_fin_neurotrans$GABAergic,
+        features = gabar,
+        group.by = "age",
+        cols = c("#adffff", "#0084ff"),
+        col.min = -1, col.max = 1
+) + RotatedAxis()
+```
+
+Expression of GABA receptors in glutamatergic Onecut3 positive cells
+```{r plot-dotplot-age-gabar-glu}
+DotPlot(object = oc3_fin_neurotrans$glutamatergic,
+        features = gabar,
+        group.by = "age",
+        cols = c("#ffc2c2", "#ff3c00"),
+        col.min = -1, col.max = 1
+) + RotatedAxis()
+```
+
+Expression of glutamate receptors in GABAergic Onecut3 positive cells
+```{r plot-dotplot-age-glur-gaba}
+DotPlot(object = oc3_fin_neurotrans$GABAergic,
+        features = glutr,
+        group.by = "age",
+        cols = c("#adffff", "#0084ff"),
+        col.min = -1, col.max = 1
+) + RotatedAxis()
+```
+
+Expression of glutamate receptors in glutamatergic Onecut3 positive cells
+```{r plot-dotplot-age-glur-glu}
+DotPlot(object = oc3_fin_neurotrans$glutamatergic,
+        features = glutr,
+        group.by = "age",
+        cols = c("#ffc2c2", "#ff3c00"),
+        col.min = -1, col.max = 1
+) + RotatedAxis()
+```
+
+## DotPlots grouped by stage
+Expression of GABA receptors in GABAergic Onecut3 positive cells
+```{r plot-dotplot-stage-gabar-gaba}
+DotPlot(object = oc3_fin_neurotrans$GABAergic,
+        features = gabar,
+        group.by = "stage",
+        cols = c("#adffff", "#0084ff"),
+        col.min = -1, col.max = 1
+) + RotatedAxis()
+```
+
+Expression of GABA receptors in glutamatergic Onecut3 positive cells
+```{r plot-dotplot-stage-gabar-glu}
+DotPlot(object = oc3_fin_neurotrans$glutamatergic,
+        features = gabar,
+        group.by = "stage",
+        cols = c("#ffc2c2", "#ff3c00"),
+        col.min = -1, col.max = 1
+) + RotatedAxis()
+```
+
+Expression of glutamate receptors in GABAergic Onecut3 positive cells
+```{r plot-dotplot-stage-glur-gaba}
+DotPlot(object = oc3_fin_neurotrans$GABAergic,
+        features = glutr,
+        group.by = "stage",
+        cols = c("#adffff", "#0084ff"),
+        col.min = -1, col.max = 1
+) + RotatedAxis()
+```
+
+Expression of glutamate receptors in glutamatergic Onecut3 positive cells
+```{r plot-dotplot-stage-glur-glu}
+DotPlot(object = oc3_fin_neurotrans$glutamatergic,
+        features = glutr,
+        group.by = "stage",
+        cols = c("#ffc2c2", "#ff3c00"),
+        col.min = -1, col.max = 1
+) + RotatedAxis()
+```
+
+
+```{r holder}
+
+```

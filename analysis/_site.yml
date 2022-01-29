@@ -5,6 +5,8 @@ navbar:
   left:
   - text: Home
     href: index.html
+  - text: Glutamate and GABA dynamic in Onecut3 neurons
+    href: dynamic_oc3-pop.html
   - text: About
     href: about.html
   - text: License

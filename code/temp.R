@@ -53,7 +53,7 @@ p17 <- DoHeatmap(onecut, cells = coe17, features = cge17, size = 3, assay = "RNA
 # pd17 <- DotPlot(subset(neuro, subset = age == "E17"), features = cge17, group.by = "wtree")
 
 
-cgp00 <- GetAssayData(subset(onecut, 
+cgp00 <- Seurat::GetAssayData(subset(onecut, 
                                           subset = age == "P00"), 
                                    "data", 
                                    "RNA") %>% 
@@ -66,7 +66,7 @@ cgp00 <- GetAssayData(subset(onecut,
                       arrange(Onecut3) %>% 
                       .$term
 
-cop00 <- GetAssayData(subset(onecut, 
+cop00 <- Seurat::GetAssayData(subset(onecut, 
                                           subset = age == "P00"), 
                                    "data", 
                                    "RNA") %>% 
@@ -84,7 +84,7 @@ cop00 <- GetAssayData(subset(onecut,
 p00 <- DoHeatmap(onecut, cells = cop00, features = cgp00, size = 3, assay = "RNA", slot = "scale.data", group.by = "age")
 # pd00 <- DotPlot(subset(neuro, subset = age == "P00"), features = cgp00, group.by = "wtree")
 
-cgp02 <- GetAssayData(subset(onecut, 
+cgp02 <- Seurat::GetAssayData(subset(onecut, 
                                           subset = age == "P02"), 
                                    "data", 
                                    "RNA") %>% 
@@ -97,7 +97,7 @@ cgp02 <- GetAssayData(subset(onecut,
                       arrange(Onecut3) %>% 
                       .$term
 
-cop02 <- GetAssayData(subset(onecut, 
+cop02 <- Seurat::GetAssayData(subset(onecut, 
                                           subset = age == "P02"), 
                                    "data", 
                                    "RNA") %>% 
@@ -115,7 +115,7 @@ cop02 <- GetAssayData(subset(onecut,
 p02 <- DoHeatmap(onecut, cells = cop02, features = cgp02, size = 3, assay = "RNA", slot = "scale.data", group.by = "age")
 # pd02 <- DotPlot(subset(neuro, subset = age == "P02"), features = cgp02, group.by = "wtree")
 
-cgp10 <- GetAssayData(subset(onecut, 
+cgp10 <- Seurat::GetAssayData(subset(onecut, 
                                           subset = age == "P10"), 
                                    "data", 
                                    "RNA") %>% 
@@ -128,7 +128,7 @@ cgp10 <- GetAssayData(subset(onecut,
                       arrange(Onecut3) %>% 
                       .$term
 
-cop10 <- GetAssayData(subset(onecut, 
+cop10 <- Seurat::GetAssayData(subset(onecut, 
                                           subset = age == "P10"), 
                                    "data", 
                                    "RNA") %>% 
@@ -146,7 +146,7 @@ cop10 <- GetAssayData(subset(onecut,
 p10 <- DoHeatmap(onecut, cells = cop10, features = cgp10, size = 3, assay = "RNA", slot = "scale.data", group.by = "age")
 # pd10 <- DotPlot(subset(neuro, subset = age == "P10"), features = cgp10, group.by = "wtree")
 
-cgp23 <- GetAssayData(subset(onecut, 
+cgp23 <- Seurat::GetAssayData(subset(onecut, 
                                           subset = age == "P23"), 
                                    "data", 
                                    "RNA") %>% 
@@ -159,7 +159,7 @@ cgp23 <- GetAssayData(subset(onecut,
                       arrange(Onecut3) %>% 
                       .$term
 
-cop23 <- GetAssayData(subset(onecut, 
+cop23 <- Seurat::GetAssayData(subset(onecut, 
                                           subset = age == "P23"), 
                                    "data", 
                                    "RNA") %>% 
@@ -177,7 +177,7 @@ cop23 <- GetAssayData(subset(onecut,
 p23 <- DoHeatmap(onecut, cells = cop23, features = cgp23, size = 3, assay = "RNA", slot = "scale.data", group.by = "age")
 # pd23 <- DotPlot(subset(neuro, subset = age == "P23"), features = cgp23, group.by = "wtree")
 
-cgp <- GetAssayData(onecut3, "data", "RNA") %>%
+cgp <- Seurat::GetAssayData(onecut3, "data", "RNA") %>%
         as.data.frame() %>%
         .[unique(c("Onecut2", "Onecut3", glutr)) %>%
                 .[. %in% row.names(onecut@assays$RNA@data)[onecut@assays$RNA@data %>% rowSums() > 1]], ] %>%
@@ -198,7 +198,7 @@ phnt <- DoHeatmap(onecut3, features = c("Onecut2", "Onecut3", neurotrans), size 
 phntr <- DoHeatmap(onecut3, features = c("Onecut2", "Onecut3", neurotrans), size = 3, assay = "RNA", slot = "data", group.by = "age")
 
 
-corn <- GetAssayData(onecut, "data", "RNA") %>% 
+corn <- Seurat::GetAssayData(onecut, "data", "RNA") %>% 
             as.data.frame() %>% 
             .[unique(c("Onecut2", "Onecut3", glutr, neurotrans, "Th", "Trh")) %>% 
                     .[. %in% row.names(onecut@assays$RNA@data)[onecut@assays$RNA@data %>% rowSums() > 1]], ] %>% 
@@ -207,7 +207,7 @@ corn <- GetAssayData(onecut, "data", "RNA") %>%
             corrr::correlate()
 write_csv(corn, file = here("output/cor_oc2or3.csv"))
 
-corn3 <- GetAssayData(onecut3, "data", "RNA") %>% 
+corn3 <- Seurat::GetAssayData(onecut3, "data", "RNA") %>% 
             as.data.frame() %>% 
             .[unique(c("Onecut2", "Onecut3", glutr, neurotrans, "Th", "Trh")) %>% 
                     .[. %in% row.names(onecut3@assays$RNA@data)[onecut3@assays$RNA@data %>% rowSums() > 1]], ] %>%
