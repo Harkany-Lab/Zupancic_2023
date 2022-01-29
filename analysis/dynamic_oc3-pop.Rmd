@@ -6,7 +6,10 @@ output: workflowr::wflow_html
 ---
 
 ```{r setup, include=FALSE, echo=FALSE}
-knitr::opts_chunk$set(echo = TRUE, comment = "#", collapse = TRUE, dev = "svg")
+knitr::opts_chunk$set(echo = TRUE,
+                      comment = "#",
+                      collapse = TRUE,
+                      dev = c("png", "pdf"))
 ```
 ```{r load-packages}
 # Load tidyverse infrastructure packages
