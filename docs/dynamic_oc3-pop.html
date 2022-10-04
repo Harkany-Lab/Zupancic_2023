@@ -15,6 +15,7 @@
 
 <title>Onecut3 in mouse hypothalamus development</title>
 
+<script src="site_libs/header-attrs-2.16/header-attrs.js"></script>
 <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link href="site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
@@ -45,6 +46,8 @@ div.section {
 }
 </style>
 
+
+
 <style type="text/css">
   code{white-space: pre-wrap;}
   span.smallcaps{font-variant: small-caps;}
@@ -64,6 +67,7 @@ if (window.hljs) {
   }
 }
 </script>
+
 
 
 
@@ -92,6 +96,9 @@ button.code-folding-btn:focus {
 }
 summary {
   display: list-item;
+}
+details > summary > p:only-child {
+  display: inline;
 }
 pre code {
   padding: 0;
@@ -149,11 +156,15 @@ $(document).ready(function () {
     href = "index.html";
   var menuAnchor = $('a[href="' + href + '"]');
 
-  // mark it active
-  menuAnchor.tab('show');
-
-  // if it's got a parent navbar menu mark it active as well
-  menuAnchor.closest('li.dropdown').addClass('active');
+  // mark the anchor link active (and if it's in a dropdown, also mark that active)
+  var dropdown = menuAnchor.closest('li.dropdown');
+  if (window.bootstrap) { // Bootstrap 4+
+    menuAnchor.addClass('active');
+    dropdown.find('> .dropdown-toggle').addClass('active');
+  } else { // Bootstrap 3
+    menuAnchor.parent().addClass('active');
+    dropdown.addClass('active');
+  }
 
   // Navbar adjustments
   var navHeight = $(".navbar").first().height() + 15;
@@ -317,7 +328,7 @@ div.tocify {
 <div class="navbar navbar-default  navbar-fixed-top" role="navigation">
   <div class="container">
     <div class="navbar-header">
-      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
@@ -350,7 +361,8 @@ div.tocify {
 
 
 
-<h1 class="title toc-ignore">Onecut3 in mouse hypothalamus development</h1>
+<h1 class="title toc-ignore">Onecut3 in mouse hypothalamus
+development</h1>
 <h4 class="author">Evgenii Tretiakov</h4>
 <h4 class="date">2021-01-28</h4>
 
@@ -359,7 +371,9 @@ div.tocify {
 
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-report" data-toggle="collapse" data-target="#workflowr-report">
-<span class="glyphicon glyphicon-list" aria-hidden="true"></span> workflowr <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
+<span class="glyphicon glyphicon-list" aria-hidden="true"></span>
+workflowr <span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span>
 </button>
 </p>
 <div id="workflowr-report" class="collapse">
@@ -368,7 +382,9 @@ div.tocify {
 <a data-toggle="tab" href="#summary">Summary</a>
 </li>
 <li>
-<a data-toggle="tab" href="#checks"> Checks <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> </a>
+<a data-toggle="tab" href="#checks"> Checks <span
+class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
+</a>
 </li>
 <li>
 <a data-toggle="tab" href="#versions">Past versions</a>
@@ -377,17 +393,27 @@ div.tocify {
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2022-01-29
+<strong>Last updated:</strong> 2022-10-04
 </p>
 <p>
-<strong>Checks:</strong> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 7 <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> 0
+<strong>Checks:</strong> <span
+class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 7
+<span class="glyphicon glyphicon-exclamation-sign text-danger"
+aria-hidden="true"></span> 0
 </p>
 <p>
-<strong>Knit directory:</strong> <code>Zupancic_2022/</code> <span class="glyphicon glyphicon-question-sign" aria-hidden="true" title="This is the local directory in which the code in this file was executed."> </span>
+<strong>Knit directory:</strong> <code>Zupancic_2022/</code> <span
+class="glyphicon glyphicon-question-sign" aria-hidden="true"
+title="This is the local directory in which the code in this file was executed.">
+</span>
 </p>
 <p>
-This reproducible <a href="https://rmarkdown.rstudio.com">R Markdown</a> analysis was created with <a
-  href="https://github.com/workflowr/workflowr">workflowr</a> (version 1.7.0). The <em>Checks</em> tab describes the reproducibility checks that were applied when the results were created. The <em>Past versions</em> tab lists the development history.
+This reproducible <a href="https://rmarkdown.rstudio.com">R Markdown</a>
+analysis was created with <a
+  href="https://github.com/workflowr/workflowr">workflowr</a> (version
+1.7.0). The <em>Checks</em> tab describes the reproducibility checks
+that were applied when the results were created. The <em>Past
+versions</em> tab lists the development history.
 </p>
 <hr>
 </div>
@@ -396,103 +422,167 @@ This reproducible <a href="https://rmarkdown.rstudio.com">R Markdown</a> analysi
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRMarkdownfilestronguptodate"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>R Markdown file:</strong> up-to-date </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRMarkdownfilestronguptodate">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>R Markdown file:</strong> up-to-date
+</a>
 </p>
 </div>
-<div id="strongRMarkdownfilestronguptodate" class="panel-collapse collapse">
+<div id="strongRMarkdownfilestronguptodate"
+class="panel-collapse collapse">
 <div class="panel-body">
-<p>Great! Since the R Markdown file has been committed to the Git repository, you know the exact version of the code that produced these results.</p>
+<p>Great! Since the R Markdown file has been committed to the Git
+repository, you know the exact version of the code that produced these
+results.</p>
 </div>
 </div>
 </div>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongEnvironmentstrongempty"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Environment:</strong> empty </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongEnvironmentstrongempty">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Environment:</strong> empty </a>
 </p>
 </div>
 <div id="strongEnvironmentstrongempty" class="panel-collapse collapse">
 <div class="panel-body">
-<p>Great job! The global environment was empty. Objects defined in the global environment can affect the analysis in your R Markdown file in unknown ways. For reproduciblity it’s best to always run the code in an empty environment.</p>
+<p>Great job! The global environment was empty. Objects defined in the
+global environment can affect the analysis in your R Markdown file in
+unknown ways. For reproduciblity it’s best to always run the code in an
+empty environment.</p>
 </div>
 </div>
 </div>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongSeedstrongcodesetseed20220105code"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Seed:</strong> <code>set.seed(20220105)</code> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongSeedstrongcodesetseed20220105code">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Seed:</strong>
+<code>set.seed(20220105)</code> </a>
 </p>
 </div>
-<div id="strongSeedstrongcodesetseed20220105code" class="panel-collapse collapse">
+<div id="strongSeedstrongcodesetseed20220105code"
+class="panel-collapse collapse">
 <div class="panel-body">
-<p>The command <code>set.seed(20220105)</code> was run prior to running the code in the R Markdown file. Setting a seed ensures that any results that rely on randomness, e.g. subsampling or permutations, are reproducible.</p>
+<p>The command <code>set.seed(20220105)</code> was run prior to running
+the code in the R Markdown file. Setting a seed ensures that any results
+that rely on randomness, e.g. subsampling or permutations, are
+reproducible.</p>
 </div>
 </div>
 </div>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongSessioninformationstrongrecorded"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Session information:</strong> recorded </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongSessioninformationstrongrecorded">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Session information:</strong>
+recorded </a>
 </p>
 </div>
-<div id="strongSessioninformationstrongrecorded" class="panel-collapse collapse">
+<div id="strongSessioninformationstrongrecorded"
+class="panel-collapse collapse">
 <div class="panel-body">
-<p>Great job! Recording the operating system, R version, and package versions is critical for reproducibility.</p>
+<p>Great job! Recording the operating system, R version, and package
+versions is critical for reproducibility.</p>
 </div>
 </div>
 </div>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongCachestrongnone"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Cache:</strong> none </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongCachestrongnone">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Cache:</strong> none </a>
 </p>
 </div>
 <div id="strongCachestrongnone" class="panel-collapse collapse">
 <div class="panel-body">
-<p>Nice! There were no cached chunks for this analysis, so you can be confident that you successfully produced the results during this run.</p>
+<p>Nice! There were no cached chunks for this analysis, so you can be
+confident that you successfully produced the results during this
+run.</p>
 </div>
 </div>
 </div>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongFilepathsstrongrelative"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>File paths:</strong> relative </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongFilepathsstrongrelative">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>File paths:</strong> relative </a>
 </p>
 </div>
 <div id="strongFilepathsstrongrelative" class="panel-collapse collapse">
 <div class="panel-body">
-<p>Great job! Using relative paths to the files within your workflowr project makes it easier to run your code on other machines.</p>
+<p>Great job! Using relative paths to the files within your workflowr
+project makes it easier to run your code on other machines.</p>
 </div>
 </div>
 </div>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomEugOTZupancic2022treeda268b6a5c100e8ae3d8ec63def157b3ad90e1ddtargetblankda268b6a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/EugOT/Zupancic_2022/tree/da268b6a5c100e8ae3d8ec63def157b3ad90e1dd" target="_blank">da268b6</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomHarkanyLabZupancic2022tree7f4395e4f4cb168c983224a3994056371dc9a604targetblank7f4395ea">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Repository version:</strong>
+<a href="https://github.com/Harkany-Lab/Zupancic_2022/tree/7f4395e4f4cb168c983224a3994056371dc9a604" target="_blank">7f4395e</a>
+</a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomEugOTZupancic2022treeda268b6a5c100e8ae3d8ec63def157b3ad90e1ddtargetblankda268b6a" class="panel-collapse collapse">
+<div
+id="strongRepositoryversionstrongahrefhttpsgithubcomHarkanyLabZupancic2022tree7f4395e4f4cb168c983224a3994056371dc9a604targetblank7f4395ea"
+class="panel-collapse collapse">
 <div class="panel-body">
 <p>
-Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility.
+Great! You are using Git for version control. Tracking code development
+and connecting the code version to the results is critical for
+reproducibility.
 </p>
 <p>
-The results in this page were generated with repository version <a href="https://github.com/EugOT/Zupancic_2022/tree/da268b6a5c100e8ae3d8ec63def157b3ad90e1dd" target="_blank">da268b6</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
+The results in this page were generated with repository version
+<a href="https://github.com/Harkany-Lab/Zupancic_2022/tree/7f4395e4f4cb168c983224a3994056371dc9a604" target="_blank">7f4395e</a>.
+See the <em>Past versions</em> tab to see a history of the changes made
+to the R Markdown and HTML files.
 </p>
 <p>
-Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
+Note that you need to be careful to ensure that all relevant files for
+the analysis have been committed to Git prior to generating the results
+(you can use <code>wflow_publish</code> or
+<code>wflow_git_commit</code>). workflowr only checks the R Markdown
+file, but you know if there are other scripts or data files that it
+depends on. Below is the status of the Git repository when the results
+were generated:
 </p>
 <pre><code>
 Ignored files:
+    Ignored:    .Rproj.user/
     Ignored:    data/oc3_fin.h5seurat
-    Ignored:    data/oldCCA_nae_srt.rds
     Ignored:    data/rar2020.srt.cont.oc2or3.raw.h5seurat
-    Ignored:    data/rar2020.srt.neuro.raw.h5seurat
-    Ignored:    output/tables/
+
+Unstaged changes:
+    Modified:   output/figures/stat-corr-plt_oc3-rna-data-Onecut3-Gad1_.pdf
+    Modified:   output/figures/stat-corr-plt_oc3-rna-data-Onecut3-Gad2_.pdf
+    Modified:   output/figures/stat-corr-plt_oc3-rna-data-Onecut3-Nav1_.pdf
+    Modified:   output/figures/stat-corr-plt_oc3-rna-data-Onecut3-Nav2_.pdf
+    Modified:   output/figures/stat-corr-plt_oc3-rna-data-Onecut3-Onecut2_.pdf
+    Modified:   output/figures/stat-corr-plt_oc3-rna-data-Onecut3-Slc17a6_.pdf
+    Modified:   output/figures/stat-corr-plt_oc3-rna-data-Onecut3-Slc32a1_.pdf
+    Modified:   output/figures/stat-corr-plt_oc3-rna-data-Onecut3-Th_.pdf
+    Modified:   output/figures/stat-corr-plt_oc3-rna-data-Onecut3-Trh_.pdf
+    Modified:   output/figures/stat-corr-plt_oc3-rna-data-Onecut3-Trio_.pdf
+    Modified:   output/figures/stat-corr-plt_oc3-rna-data-Slc32a1-Onecut3_.pdf
+    Modified:   output/figures/stat-corr-plt_oc3-rna-data-Slc32a1-Th_.pdf
+    Modified:   output/figures/stat-corr-plt_oc3-rna-data-Slc32a1-Trh_.pdf
+    Modified:   output/figures/stat-corr-plt_oc3-rna-data-Th-Onecut3_.pdf
+    Modified:   output/figures/stat-corr-plt_oc3-rna-data-Th-Trh_.pdf
 
 </code></pre>
 <p>
-Note that any generated files, e.g. HTML, png, CSS, etc., are not included in this status report because it is ok for generated content to have uncommitted changes.
+Note that any generated files, e.g. HTML, png, CSS, etc., are not
+included in this status report because it is ok for generated content to
+have uncommitted changes.
 </p>
 </div>
 </div>
@@ -503,7 +593,12 @@ Note that any generated files, e.g. HTML, png, CSS, etc., are not included in t
 <div id="versions" class="tab-pane fade">
 
 <p>
-These are the previous versions of the repository in which changes were made to the R Markdown (<code>analysis/dynamic_oc3-pop.Rmd</code>) and HTML (<code>docs/dynamic_oc3-pop.html</code>) files. If you’ve configured a remote Git repository (see <code>?wflow_git_remote</code>), click on the hyperlinks in the table below to view the files as they were in that past version.
+These are the previous versions of the repository in which changes were
+made to the R Markdown (<code>analysis/dynamic_oc3-pop.Rmd</code>) and
+HTML (<code>docs/dynamic_oc3-pop.html</code>) files. If you’ve
+configured a remote Git repository (see <code>?wflow_git_remote</code>),
+click on the hyperlinks in the table below to view the files as they
+were in that past version.
 </p>
 <div class="table-responsive">
 <table class="table table-condensed table-hover">
@@ -529,10 +624,44 @@ Message
 <tbody>
 <tr>
 <td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/Harkany-Lab/Zupancic_2022/blob/7f4395e4f4cb168c983224a3994056371dc9a604/analysis/dynamic_oc3-pop.Rmd" target="_blank">7f4395e</a>
+</td>
+<td>
+Evgenii O. Tretiakov
+</td>
+<td>
+2022-10-04
+</td>
+<td>
+workflowr::wflow_publish("analysis/dynamic_oc3-pop.Rmd", update = T,
+</td>
+</tr>
+<tr>
+<td>
 html
 </td>
 <td>
-<a href="https://rawcdn.githack.com/EugOT/Zupancic_2022/da268b6a5c100e8ae3d8ec63def157b3ad90e1dd/docs/dynamic_oc3-pop.html" target="_blank">da268b6</a>
+<a href="https://rawcdn.githack.com/Harkany-Lab/Zupancic_2022/e928499d2f201f71d6abc7441985700f17d40fd9/docs/dynamic_oc3-pop.html" target="_blank">e928499</a>
+</td>
+<td>
+EugOT
+</td>
+<td>
+2022-01-29
+</td>
+<td>
+Build site.
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/Harkany-Lab/Zupancic_2022/da268b6a5c100e8ae3d8ec63def157b3ad90e1dd/docs/dynamic_oc3-pop.html" target="_blank">da268b6</a>
 </td>
 <td>
 EugOT
@@ -549,7 +678,7 @@ rebuild with fixed output device to png and pdf
 Rmd
 </td>
 <td>
-<a href="https://github.com/EugOT/Zupancic_2022/blob/3049d38a8356f24125e839d1112b387377e10198/analysis/dynamic_oc3-pop.Rmd" target="_blank">3049d38</a>
+<a href="https://github.com/Harkany-Lab/Zupancic_2022/blob/3049d38a8356f24125e839d1112b387377e10198/analysis/dynamic_oc3-pop.Rmd" target="_blank">3049d38</a>
 </td>
 <td>
 EugOT
@@ -566,7 +695,7 @@ fix output device to png and pdf
 Rmd
 </td>
 <td>
-<a href="https://github.com/EugOT/Zupancic_2022/blob/b21b61a2dc858d868b028645a2a273689db59a30/analysis/dynamic_oc3-pop.Rmd" target="_blank">b21b61a</a>
+<a href="https://github.com/Harkany-Lab/Zupancic_2022/blob/b21b61a2dc858d868b028645a2a273689db59a30/analysis/dynamic_oc3-pop.Rmd" target="_blank">b21b61a</a>
 </td>
 <td>
 EugOT
@@ -583,7 +712,7 @@ save final subset of cells
 html
 </td>
 <td>
-<a href="https://rawcdn.githack.com/EugOT/Zupancic_2022/b21b61a2dc858d868b028645a2a273689db59a30/docs/dynamic_oc3-pop.html" target="_blank">b21b61a</a>
+<a href="https://rawcdn.githack.com/Harkany-Lab/Zupancic_2022/b21b61a2dc858d868b028645a2a273689db59a30/docs/dynamic_oc3-pop.html" target="_blank">b21b61a</a>
 </td>
 <td>
 EugOT
@@ -600,7 +729,7 @@ save final subset of cells
 html
 </td>
 <td>
-<a href="https://rawcdn.githack.com/EugOT/Zupancic_2022/fc91ebfefe016658ac8a8b15a4aa9ad9a313ab75/docs/dynamic_oc3-pop.html" target="_blank">fc91ebf</a>
+<a href="https://rawcdn.githack.com/Harkany-Lab/Zupancic_2022/fc91ebfefe016658ac8a8b15a4aa9ad9a313ab75/docs/dynamic_oc3-pop.html" target="_blank">fc91ebf</a>
 </td>
 <td>
 EugOT
@@ -617,7 +746,7 @@ Build site.
 Rmd
 </td>
 <td>
-<a href="https://github.com/EugOT/Zupancic_2022/blob/1df6d48261e1a1c70a011db219336c3ce3168c69/analysis/dynamic_oc3-pop.Rmd" target="_blank">1df6d48</a>
+<a href="https://github.com/Harkany-Lab/Zupancic_2022/blob/1df6d48261e1a1c70a011db219336c3ce3168c69/analysis/dynamic_oc3-pop.Rmd" target="_blank">1df6d48</a>
 </td>
 <td>
 EugOT
@@ -626,7 +755,7 @@ EugOT
 2022-01-29
 </td>
 <td>
-wflow_publish(“*“)
+wflow_publish("*")
 </td>
 </tr>
 <tr>
@@ -634,7 +763,7 @@ wflow_publish(“*“)
 html
 </td>
 <td>
-<a href="https://rawcdn.githack.com/EugOT/Zupancic_2022/d106e47185a9b836156cab167df844bb9d1b3ebb/docs/dynamic_oc3-pop.html" target="_blank">d106e47</a>
+<a href="https://rawcdn.githack.com/Harkany-Lab/Zupancic_2022/d106e47185a9b836156cab167df844bb9d1b3ebb/docs/dynamic_oc3-pop.html" target="_blank">d106e47</a>
 </td>
 <td>
 EugOT
@@ -651,7 +780,7 @@ Build site.
 Rmd
 </td>
 <td>
-<a href="https://github.com/EugOT/Zupancic_2022/blob/6a77e95d62e71bb92e766f552b45cccfc254c23e/analysis/dynamic_oc3-pop.Rmd" target="_blank">6a77e95</a>
+<a href="https://github.com/Harkany-Lab/Zupancic_2022/blob/6a77e95d62e71bb92e766f552b45cccfc254c23e/analysis/dynamic_oc3-pop.Rmd" target="_blank">6a77e95</a>
 </td>
 <td>
 EugOT
@@ -660,7 +789,7 @@ EugOT
 2022-01-29
 </td>
 <td>
-wflow_publish(“*“)
+wflow_publish("*")
 </td>
 </tr>
 <tr>
@@ -668,7 +797,7 @@ wflow_publish(“*“)
 html
 </td>
 <td>
-<a href="https://rawcdn.githack.com/EugOT/Zupancic_2022/6a77e95d62e71bb92e766f552b45cccfc254c23e/docs/dynamic_oc3-pop.html" target="_blank">6a77e95</a>
+<a href="https://rawcdn.githack.com/Harkany-Lab/Zupancic_2022/6a77e95d62e71bb92e766f552b45cccfc254c23e/docs/dynamic_oc3-pop.html" target="_blank">6a77e95</a>
 </td>
 <td>
 EugOT
@@ -677,7 +806,7 @@ EugOT
 2022-01-29
 </td>
 <td>
-wflow_publish(“*“)
+wflow_publish("*")
 </td>
 </tr>
 </tbody>
@@ -691,20 +820,24 @@ wflow_publish(“*“)
 library(here)
 # here() starts at /home/etretiakov/src/Zupancic_2022
 library(tidyverse)
-# ── Attaching packages ─────────────────────────────────────── tidyverse 1.3.1 ──
-# ✔ ggplot2 3.3.5     ✔ purrr   0.3.4
-# ✔ tibble  3.1.6     ✔ dplyr   1.0.7
-# ✔ tidyr   1.1.4     ✔ stringr 1.4.0
-# ✔ readr   2.1.1     ✔ forcats 0.5.1
+# ── Attaching packages
+# ───────────────────────────────────────
+# tidyverse 1.3.2 ──
+# ✔ ggplot2 3.3.6      ✔ purrr   0.3.4 
+# ✔ tibble  3.1.8      ✔ dplyr   1.0.10
+# ✔ tidyr   1.2.1      ✔ stringr 1.4.1 
+# ✔ readr   2.1.2      ✔ forcats 0.5.2 
 # ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
 # ✖ dplyr::filter() masks stats::filter()
 # ✖ dplyr::lag()    masks stats::lag()
 library(magrittr)
 # 
 # Attaching package: &#39;magrittr&#39;
+# 
 # The following object is masked from &#39;package:purrr&#39;:
 # 
 #     set_names
+# 
 # The following object is masked from &#39;package:tidyr&#39;:
 # 
 #     extract
@@ -712,6 +845,7 @@ library(zeallot)
 library(future)
 # 
 # Attaching package: &#39;future&#39;
+# 
 # The following objects are masked from &#39;package:zeallot&#39;:
 # 
 #     %-&gt;%, %&lt;-%
@@ -719,10 +853,8 @@ library(future)
 # Load packages for scRNA-seq analysis and visualisation
 library(sctransform)
 library(Seurat)
-# Registered S3 method overwritten by &#39;spatstat.geom&#39;:
-#   method     from
-#   print.boxx cli
 # Attaching SeuratObject
+# Attaching sp
 library(SeuratWrappers)
 library(SeuratDisk)
 # Registered S3 method overwritten by &#39;SeuratDisk&#39;:
@@ -744,11 +876,16 @@ set.seed(seed = reseed)</code></pre>
 n_cores &lt;- available_cores(prop2use = .5)
 # Parameters for parallel execution
 plan(&quot;multicore&quot;, workers = n_cores)
+# Warning in supportsMulticoreAndRStudio(...): [ONE-TIME WARNING] Forked
+# processing (&#39;multicore&#39;) is not supported when running R from RStudio
+# because it is considered unstable. For more details, how to control forked
+# processing or not, and how to silence this warning in future R sessions, see ?
+# parallelly::supportsMulticore
 options(future.globals.maxSize = Inf,
         future.rng.onMisuse = &quot;ignore&quot;)
 plan()
 # multicore:
-# - args: function (..., envir = parent.frame(), workers = 16)
+# - args: function (..., workers = 16, envir = parent.frame())
 # - tweaked: TRUE
 # - call: plan(&quot;multicore&quot;, workers = n_cores)</code></pre>
 <p>Read data</p>
@@ -902,7 +1039,8 @@ walk2(n_corrs, p_corrs, save_my_plot, type = &quot;stat-corr-plt&quot;)
 # `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
 # `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
 # `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
-<p>Visualise intersections sets that we are going to use (highlighted)</p>
+<p>Visualise intersections sets that we are going to use
+(highlighted)</p>
 <pre class="r"><code>upset(as.data.frame(content_mtx_oc3),
   order.by = &quot;freq&quot;,
   sets.x.label = &quot;Number of cells&quot;,
@@ -949,7 +1087,7 @@ Date
 <tbody>
 <tr>
 <td>
-<a href="https://github.com/EugOT/Zupancic_2022/blob/da268b6a5c100e8ae3d8ec63def157b3ad90e1dd/docs/figure/dynamic_oc3-pop.Rmd/plot-upset-oc3-1.png" target="_blank">da268b6</a>
+<a href="https://github.com/Harkany-Lab/Zupancic_2022/blob/da268b6a5c100e8ae3d8ec63def157b3ad90e1dd/docs/figure/dynamic_oc3-pop.Rmd/plot-upset-oc3-1.png" target="_blank">da268b6</a>
 </td>
 <td>
 EugOT
@@ -960,7 +1098,7 @@ EugOT
 </tr>
 <tr>
 <td>
-<a href="https://github.com/EugOT/Zupancic_2022/blob/fc91ebfefe016658ac8a8b15a4aa9ad9a313ab75/docs/figure/dynamic_oc3-pop.Rmd/plot-upset-oc3-1.png" target="_blank">fc91ebf</a>
+<a href="https://github.com/Harkany-Lab/Zupancic_2022/blob/fc91ebfefe016658ac8a8b15a4aa9ad9a313ab75/docs/figure/dynamic_oc3-pop.Rmd/plot-upset-oc3-1.png" target="_blank">fc91ebf</a>
 </td>
 <td>
 EugOT
@@ -971,7 +1109,7 @@ EugOT
 </tr>
 <tr>
 <td>
-<a href="https://github.com/EugOT/Zupancic_2022/blob/6a77e95d62e71bb92e766f552b45cccfc254c23e/docs/figure/dynamic_oc3-pop.Rmd/plot-upset-oc3-1.png" target="_blank">6a77e95</a>
+<a href="https://github.com/Harkany-Lab/Zupancic_2022/blob/6a77e95d62e71bb92e766f552b45cccfc254c23e/docs/figure/dynamic_oc3-pop.Rmd/plot-upset-oc3-1.png" target="_blank">6a77e95</a>
 </td>
 <td>
 EugOT
@@ -984,6 +1122,28 @@ EugOT
 </table>
 </div>
 </div>
+<pre class="r"><code>upset(as.data.frame(content_mtx_oc3),
+  order.by = &quot;freq&quot;,
+  sets.x.label = &quot;Number of cells&quot;,
+  text.scale = c(2, 1.6, 2, 1.3, 2, 3),
+  nsets = 15,
+  sets = c(&quot;Th&quot;, &quot;Trh&quot;, &quot;Slc32a1&quot;, &quot;Slc17a6&quot;),
+  queries = list(
+    list(
+      query = intersects,
+      params = list(&quot;Th&quot;, &quot;Slc32a1&quot;),
+      active = T
+    ),
+    list(
+      query = intersects,
+      params = list(&quot;Trh&quot;, &quot;Slc17a6&quot;),
+      active = T
+    )
+  ),
+  nintersects = 60,
+  empty.intersections = &quot;on&quot;
+)</code></pre>
+<p><img src="figure/dynamic_oc3-pop.Rmd/plot-upset-oc3-mod-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p>Regroup factor by stages for more balanced groups</p>
 <pre class="r"><code>onecut3$age %&gt;% forcats::fct_count()
 # # A tibble: 6 × 2
@@ -1035,7 +1195,8 @@ oc3_fin &lt;-
         expression = gaba_status == TRUE &amp; glut_status == FALSE),
       WhichCells(onecut3,
         expression = glut_status == TRUE &amp; gaba_occurs == FALSE)))</code></pre>
-<div id="check-contingency-tables-for-neurotransmitter-signature" class="section level2">
+<div id="check-contingency-tables-for-neurotransmitter-signature"
+class="section level2">
 <h2>Check contingency tables for neurotransmitter signature</h2>
 <pre class="r"><code>oc3_fin@meta.data %&gt;%
   janitor::tabyl(glut_status, gaba_status)
@@ -1135,7 +1296,7 @@ Date
 <tbody>
 <tr>
 <td>
-<a href="https://github.com/EugOT/Zupancic_2022/blob/da268b6a5c100e8ae3d8ec63def157b3ad90e1dd/docs/figure/dynamic_oc3-pop.Rmd/plot-dotplot-age-gabar-gaba-1.png" target="_blank">da268b6</a>
+<a href="https://github.com/Harkany-Lab/Zupancic_2022/blob/da268b6a5c100e8ae3d8ec63def157b3ad90e1dd/docs/figure/dynamic_oc3-pop.Rmd/plot-dotplot-age-gabar-gaba-1.png" target="_blank">da268b6</a>
 </td>
 <td>
 EugOT
@@ -1146,7 +1307,7 @@ EugOT
 </tr>
 <tr>
 <td>
-<a href="https://github.com/EugOT/Zupancic_2022/blob/fc91ebfefe016658ac8a8b15a4aa9ad9a313ab75/docs/figure/dynamic_oc3-pop.Rmd/plot-dotplot-age-gabar-gaba-1.png" target="_blank">fc91ebf</a>
+<a href="https://github.com/Harkany-Lab/Zupancic_2022/blob/fc91ebfefe016658ac8a8b15a4aa9ad9a313ab75/docs/figure/dynamic_oc3-pop.Rmd/plot-dotplot-age-gabar-gaba-1.png" target="_blank">fc91ebf</a>
 </td>
 <td>
 EugOT
@@ -1157,7 +1318,7 @@ EugOT
 </tr>
 <tr>
 <td>
-<a href="https://github.com/EugOT/Zupancic_2022/blob/6a77e95d62e71bb92e766f552b45cccfc254c23e/docs/figure/dynamic_oc3-pop.Rmd/plot-dotplot-age-gabar-gaba-1.png" target="_blank">6a77e95</a>
+<a href="https://github.com/Harkany-Lab/Zupancic_2022/blob/6a77e95d62e71bb92e766f552b45cccfc254c23e/docs/figure/dynamic_oc3-pop.Rmd/plot-dotplot-age-gabar-gaba-1.png" target="_blank">6a77e95</a>
 </td>
 <td>
 EugOT
@@ -1170,7 +1331,8 @@ EugOT
 </table>
 </div>
 </div>
-<p>Expression of GABA receptors in glutamatergic Onecut3 positive cells</p>
+<p>Expression of GABA receptors in glutamatergic Onecut3 positive
+cells</p>
 <pre class="r"><code>DotPlot(object = oc3_fin_neurotrans$glutamatergic,
         features = gabar,
         group.by = &quot;age&quot;,
@@ -1202,7 +1364,7 @@ Date
 <tbody>
 <tr>
 <td>
-<a href="https://github.com/EugOT/Zupancic_2022/blob/da268b6a5c100e8ae3d8ec63def157b3ad90e1dd/docs/figure/dynamic_oc3-pop.Rmd/plot-dotplot-age-gabar-glu-1.png" target="_blank">da268b6</a>
+<a href="https://github.com/Harkany-Lab/Zupancic_2022/blob/da268b6a5c100e8ae3d8ec63def157b3ad90e1dd/docs/figure/dynamic_oc3-pop.Rmd/plot-dotplot-age-gabar-glu-1.png" target="_blank">da268b6</a>
 </td>
 <td>
 EugOT
@@ -1213,7 +1375,7 @@ EugOT
 </tr>
 <tr>
 <td>
-<a href="https://github.com/EugOT/Zupancic_2022/blob/fc91ebfefe016658ac8a8b15a4aa9ad9a313ab75/docs/figure/dynamic_oc3-pop.Rmd/plot-dotplot-age-gabar-glu-1.png" target="_blank">fc91ebf</a>
+<a href="https://github.com/Harkany-Lab/Zupancic_2022/blob/fc91ebfefe016658ac8a8b15a4aa9ad9a313ab75/docs/figure/dynamic_oc3-pop.Rmd/plot-dotplot-age-gabar-glu-1.png" target="_blank">fc91ebf</a>
 </td>
 <td>
 EugOT
@@ -1224,7 +1386,7 @@ EugOT
 </tr>
 <tr>
 <td>
-<a href="https://github.com/EugOT/Zupancic_2022/blob/6a77e95d62e71bb92e766f552b45cccfc254c23e/docs/figure/dynamic_oc3-pop.Rmd/plot-dotplot-age-gabar-glu-1.png" target="_blank">6a77e95</a>
+<a href="https://github.com/Harkany-Lab/Zupancic_2022/blob/6a77e95d62e71bb92e766f552b45cccfc254c23e/docs/figure/dynamic_oc3-pop.Rmd/plot-dotplot-age-gabar-glu-1.png" target="_blank">6a77e95</a>
 </td>
 <td>
 EugOT
@@ -1237,14 +1399,15 @@ EugOT
 </table>
 </div>
 </div>
-<p>Expression of glutamate receptors in GABAergic Onecut3 positive cells</p>
+<p>Expression of glutamate receptors in GABAergic Onecut3 positive
+cells</p>
 <pre class="r"><code>DotPlot(object = oc3_fin_neurotrans$GABAergic,
         features = glutr,
         group.by = &quot;age&quot;,
         cols = c(&quot;#adffff&quot;, &quot;#0084ff&quot;),
         col.min = -1, col.max = 1
 ) + RotatedAxis()</code></pre>
-<p><img src="figure/dynamic_oc3-pop.Rmd/plot-dotplot-age-glur-gaba-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/dynamic_oc3-pop.Rmd/plot-dotplot-age-glur-gaba-1.png" width="864" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-plot-dotplot-age-glur-gaba-1">
 Past versions of plot-dotplot-age-glur-gaba-1.png
@@ -1269,7 +1432,7 @@ Date
 <tbody>
 <tr>
 <td>
-<a href="https://github.com/EugOT/Zupancic_2022/blob/da268b6a5c100e8ae3d8ec63def157b3ad90e1dd/docs/figure/dynamic_oc3-pop.Rmd/plot-dotplot-age-glur-gaba-1.png" target="_blank">da268b6</a>
+<a href="https://github.com/Harkany-Lab/Zupancic_2022/blob/da268b6a5c100e8ae3d8ec63def157b3ad90e1dd/docs/figure/dynamic_oc3-pop.Rmd/plot-dotplot-age-glur-gaba-1.png" target="_blank">da268b6</a>
 </td>
 <td>
 EugOT
@@ -1280,7 +1443,7 @@ EugOT
 </tr>
 <tr>
 <td>
-<a href="https://github.com/EugOT/Zupancic_2022/blob/fc91ebfefe016658ac8a8b15a4aa9ad9a313ab75/docs/figure/dynamic_oc3-pop.Rmd/plot-dotplot-age-glur-gaba-1.png" target="_blank">fc91ebf</a>
+<a href="https://github.com/Harkany-Lab/Zupancic_2022/blob/fc91ebfefe016658ac8a8b15a4aa9ad9a313ab75/docs/figure/dynamic_oc3-pop.Rmd/plot-dotplot-age-glur-gaba-1.png" target="_blank">fc91ebf</a>
 </td>
 <td>
 EugOT
@@ -1291,7 +1454,7 @@ EugOT
 </tr>
 <tr>
 <td>
-<a href="https://github.com/EugOT/Zupancic_2022/blob/6a77e95d62e71bb92e766f552b45cccfc254c23e/docs/figure/dynamic_oc3-pop.Rmd/plot-dotplot-age-glur-gaba-1.png" target="_blank">6a77e95</a>
+<a href="https://github.com/Harkany-Lab/Zupancic_2022/blob/6a77e95d62e71bb92e766f552b45cccfc254c23e/docs/figure/dynamic_oc3-pop.Rmd/plot-dotplot-age-glur-gaba-1.png" target="_blank">6a77e95</a>
 </td>
 <td>
 EugOT
@@ -1304,14 +1467,15 @@ EugOT
 </table>
 </div>
 </div>
-<p>Expression of glutamate receptors in glutamatergic Onecut3 positive cells</p>
+<p>Expression of glutamate receptors in glutamatergic Onecut3 positive
+cells</p>
 <pre class="r"><code>DotPlot(object = oc3_fin_neurotrans$glutamatergic,
         features = glutr,
         group.by = &quot;age&quot;,
         cols = c(&quot;#ffc2c2&quot;, &quot;#ff3c00&quot;),
         col.min = -1, col.max = 1
 ) + RotatedAxis()</code></pre>
-<p><img src="figure/dynamic_oc3-pop.Rmd/plot-dotplot-age-glur-glu-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/dynamic_oc3-pop.Rmd/plot-dotplot-age-glur-glu-1.png" width="864" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-plot-dotplot-age-glur-glu-1">
 Past versions of plot-dotplot-age-glur-glu-1.png
@@ -1336,7 +1500,7 @@ Date
 <tbody>
 <tr>
 <td>
-<a href="https://github.com/EugOT/Zupancic_2022/blob/da268b6a5c100e8ae3d8ec63def157b3ad90e1dd/docs/figure/dynamic_oc3-pop.Rmd/plot-dotplot-age-glur-glu-1.png" target="_blank">da268b6</a>
+<a href="https://github.com/Harkany-Lab/Zupancic_2022/blob/da268b6a5c100e8ae3d8ec63def157b3ad90e1dd/docs/figure/dynamic_oc3-pop.Rmd/plot-dotplot-age-glur-glu-1.png" target="_blank">da268b6</a>
 </td>
 <td>
 EugOT
@@ -1347,7 +1511,7 @@ EugOT
 </tr>
 <tr>
 <td>
-<a href="https://github.com/EugOT/Zupancic_2022/blob/fc91ebfefe016658ac8a8b15a4aa9ad9a313ab75/docs/figure/dynamic_oc3-pop.Rmd/plot-dotplot-age-glur-glu-1.png" target="_blank">fc91ebf</a>
+<a href="https://github.com/Harkany-Lab/Zupancic_2022/blob/fc91ebfefe016658ac8a8b15a4aa9ad9a313ab75/docs/figure/dynamic_oc3-pop.Rmd/plot-dotplot-age-glur-glu-1.png" target="_blank">fc91ebf</a>
 </td>
 <td>
 EugOT
@@ -1358,7 +1522,7 @@ EugOT
 </tr>
 <tr>
 <td>
-<a href="https://github.com/EugOT/Zupancic_2022/blob/6a77e95d62e71bb92e766f552b45cccfc254c23e/docs/figure/dynamic_oc3-pop.Rmd/plot-dotplot-age-glur-glu-1.png" target="_blank">6a77e95</a>
+<a href="https://github.com/Harkany-Lab/Zupancic_2022/blob/6a77e95d62e71bb92e766f552b45cccfc254c23e/docs/figure/dynamic_oc3-pop.Rmd/plot-dotplot-age-glur-glu-1.png" target="_blank">6a77e95</a>
 </td>
 <td>
 EugOT
@@ -1380,7 +1544,8 @@ EugOT
         group.by = &quot;stage&quot;,
         cols = c(&quot;#adffff&quot;, &quot;#0084ff&quot;),
         col.min = -1, col.max = 1
-) + RotatedAxis()</code></pre>
+) + RotatedAxis()
+# Warning: Scaling data with a low number of groups may produce misleading results</code></pre>
 <p><img src="figure/dynamic_oc3-pop.Rmd/plot-dotplot-stage-gabar-gaba-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-plot-dotplot-stage-gabar-gaba-1">
@@ -1406,7 +1571,7 @@ Date
 <tbody>
 <tr>
 <td>
-<a href="https://github.com/EugOT/Zupancic_2022/blob/da268b6a5c100e8ae3d8ec63def157b3ad90e1dd/docs/figure/dynamic_oc3-pop.Rmd/plot-dotplot-stage-gabar-gaba-1.png" target="_blank">da268b6</a>
+<a href="https://github.com/Harkany-Lab/Zupancic_2022/blob/da268b6a5c100e8ae3d8ec63def157b3ad90e1dd/docs/figure/dynamic_oc3-pop.Rmd/plot-dotplot-stage-gabar-gaba-1.png" target="_blank">da268b6</a>
 </td>
 <td>
 EugOT
@@ -1417,7 +1582,7 @@ EugOT
 </tr>
 <tr>
 <td>
-<a href="https://github.com/EugOT/Zupancic_2022/blob/fc91ebfefe016658ac8a8b15a4aa9ad9a313ab75/docs/figure/dynamic_oc3-pop.Rmd/plot-dotplot-stage-gabar-gaba-1.png" target="_blank">fc91ebf</a>
+<a href="https://github.com/Harkany-Lab/Zupancic_2022/blob/fc91ebfefe016658ac8a8b15a4aa9ad9a313ab75/docs/figure/dynamic_oc3-pop.Rmd/plot-dotplot-stage-gabar-gaba-1.png" target="_blank">fc91ebf</a>
 </td>
 <td>
 EugOT
@@ -1428,7 +1593,7 @@ EugOT
 </tr>
 <tr>
 <td>
-<a href="https://github.com/EugOT/Zupancic_2022/blob/6a77e95d62e71bb92e766f552b45cccfc254c23e/docs/figure/dynamic_oc3-pop.Rmd/plot-dotplot-stage-gabar-gaba-1.png" target="_blank">6a77e95</a>
+<a href="https://github.com/Harkany-Lab/Zupancic_2022/blob/6a77e95d62e71bb92e766f552b45cccfc254c23e/docs/figure/dynamic_oc3-pop.Rmd/plot-dotplot-stage-gabar-gaba-1.png" target="_blank">6a77e95</a>
 </td>
 <td>
 EugOT
@@ -1441,14 +1606,16 @@ EugOT
 </table>
 </div>
 </div>
-<p>Expression of GABA receptors in glutamatergic Onecut3 positive cells</p>
+<p>Expression of GABA receptors in glutamatergic Onecut3 positive
+cells</p>
 <pre class="r"><code>DotPlot(object = oc3_fin_neurotrans$glutamatergic,
         features = gabar,
         group.by = &quot;stage&quot;,
         cols = c(&quot;#ffc2c2&quot;, &quot;#ff3c00&quot;),
         col.min = -1, col.max = 1
-) + RotatedAxis()</code></pre>
-<p><img src="figure/dynamic_oc3-pop.Rmd/plot-dotplot-stage-gabar-glu-1.png" width="672" style="display: block; margin: auto;" /></p>
+) + RotatedAxis()
+# Warning: Scaling data with a low number of groups may produce misleading results</code></pre>
+<p><img src="figure/dynamic_oc3-pop.Rmd/plot-dotplot-stage-gabar-glu-1.png" width="864" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-plot-dotplot-stage-gabar-glu-1">
 Past versions of plot-dotplot-stage-gabar-glu-1.png
@@ -1473,7 +1640,7 @@ Date
 <tbody>
 <tr>
 <td>
-<a href="https://github.com/EugOT/Zupancic_2022/blob/da268b6a5c100e8ae3d8ec63def157b3ad90e1dd/docs/figure/dynamic_oc3-pop.Rmd/plot-dotplot-stage-gabar-glu-1.png" target="_blank">da268b6</a>
+<a href="https://github.com/Harkany-Lab/Zupancic_2022/blob/da268b6a5c100e8ae3d8ec63def157b3ad90e1dd/docs/figure/dynamic_oc3-pop.Rmd/plot-dotplot-stage-gabar-glu-1.png" target="_blank">da268b6</a>
 </td>
 <td>
 EugOT
@@ -1484,7 +1651,7 @@ EugOT
 </tr>
 <tr>
 <td>
-<a href="https://github.com/EugOT/Zupancic_2022/blob/fc91ebfefe016658ac8a8b15a4aa9ad9a313ab75/docs/figure/dynamic_oc3-pop.Rmd/plot-dotplot-stage-gabar-glu-1.png" target="_blank">fc91ebf</a>
+<a href="https://github.com/Harkany-Lab/Zupancic_2022/blob/fc91ebfefe016658ac8a8b15a4aa9ad9a313ab75/docs/figure/dynamic_oc3-pop.Rmd/plot-dotplot-stage-gabar-glu-1.png" target="_blank">fc91ebf</a>
 </td>
 <td>
 EugOT
@@ -1495,7 +1662,7 @@ EugOT
 </tr>
 <tr>
 <td>
-<a href="https://github.com/EugOT/Zupancic_2022/blob/6a77e95d62e71bb92e766f552b45cccfc254c23e/docs/figure/dynamic_oc3-pop.Rmd/plot-dotplot-stage-gabar-glu-1.png" target="_blank">6a77e95</a>
+<a href="https://github.com/Harkany-Lab/Zupancic_2022/blob/6a77e95d62e71bb92e766f552b45cccfc254c23e/docs/figure/dynamic_oc3-pop.Rmd/plot-dotplot-stage-gabar-glu-1.png" target="_blank">6a77e95</a>
 </td>
 <td>
 EugOT
@@ -1508,14 +1675,16 @@ EugOT
 </table>
 </div>
 </div>
-<p>Expression of glutamate receptors in GABAergic Onecut3 positive cells</p>
+<p>Expression of glutamate receptors in GABAergic Onecut3 positive
+cells</p>
 <pre class="r"><code>DotPlot(object = oc3_fin_neurotrans$GABAergic,
         features = glutr,
         group.by = &quot;stage&quot;,
         cols = c(&quot;#adffff&quot;, &quot;#0084ff&quot;),
         col.min = -1, col.max = 1
-) + RotatedAxis()</code></pre>
-<p><img src="figure/dynamic_oc3-pop.Rmd/plot-dotplot-stage-glur-gaba-1.png" width="672" style="display: block; margin: auto;" /></p>
+) + RotatedAxis()
+# Warning: Scaling data with a low number of groups may produce misleading results</code></pre>
+<p><img src="figure/dynamic_oc3-pop.Rmd/plot-dotplot-stage-glur-gaba-1.png" width="864" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-plot-dotplot-stage-glur-gaba-1">
 Past versions of plot-dotplot-stage-glur-gaba-1.png
@@ -1540,7 +1709,7 @@ Date
 <tbody>
 <tr>
 <td>
-<a href="https://github.com/EugOT/Zupancic_2022/blob/da268b6a5c100e8ae3d8ec63def157b3ad90e1dd/docs/figure/dynamic_oc3-pop.Rmd/plot-dotplot-stage-glur-gaba-1.png" target="_blank">da268b6</a>
+<a href="https://github.com/Harkany-Lab/Zupancic_2022/blob/da268b6a5c100e8ae3d8ec63def157b3ad90e1dd/docs/figure/dynamic_oc3-pop.Rmd/plot-dotplot-stage-glur-gaba-1.png" target="_blank">da268b6</a>
 </td>
 <td>
 EugOT
@@ -1551,7 +1720,7 @@ EugOT
 </tr>
 <tr>
 <td>
-<a href="https://github.com/EugOT/Zupancic_2022/blob/fc91ebfefe016658ac8a8b15a4aa9ad9a313ab75/docs/figure/dynamic_oc3-pop.Rmd/plot-dotplot-stage-glur-gaba-1.png" target="_blank">fc91ebf</a>
+<a href="https://github.com/Harkany-Lab/Zupancic_2022/blob/fc91ebfefe016658ac8a8b15a4aa9ad9a313ab75/docs/figure/dynamic_oc3-pop.Rmd/plot-dotplot-stage-glur-gaba-1.png" target="_blank">fc91ebf</a>
 </td>
 <td>
 EugOT
@@ -1562,7 +1731,7 @@ EugOT
 </tr>
 <tr>
 <td>
-<a href="https://github.com/EugOT/Zupancic_2022/blob/6a77e95d62e71bb92e766f552b45cccfc254c23e/docs/figure/dynamic_oc3-pop.Rmd/plot-dotplot-stage-glur-gaba-1.png" target="_blank">6a77e95</a>
+<a href="https://github.com/Harkany-Lab/Zupancic_2022/blob/6a77e95d62e71bb92e766f552b45cccfc254c23e/docs/figure/dynamic_oc3-pop.Rmd/plot-dotplot-stage-glur-gaba-1.png" target="_blank">6a77e95</a>
 </td>
 <td>
 EugOT
@@ -1575,14 +1744,16 @@ EugOT
 </table>
 </div>
 </div>
-<p>Expression of glutamate receptors in glutamatergic Onecut3 positive cells</p>
+<p>Expression of glutamate receptors in glutamatergic Onecut3 positive
+cells</p>
 <pre class="r"><code>DotPlot(object = oc3_fin_neurotrans$glutamatergic,
         features = glutr,
         group.by = &quot;stage&quot;,
         cols = c(&quot;#ffc2c2&quot;, &quot;#ff3c00&quot;),
         col.min = -1, col.max = 1
-) + RotatedAxis()</code></pre>
-<p><img src="figure/dynamic_oc3-pop.Rmd/plot-dotplot-stage-glur-glu-1.png" width="672" style="display: block; margin: auto;" /></p>
+) + RotatedAxis()
+# Warning: Scaling data with a low number of groups may produce misleading results</code></pre>
+<p><img src="figure/dynamic_oc3-pop.Rmd/plot-dotplot-stage-glur-glu-1.png" width="864" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-plot-dotplot-stage-glur-glu-1">
 Past versions of plot-dotplot-stage-glur-glu-1.png
@@ -1607,7 +1778,7 @@ Date
 <tbody>
 <tr>
 <td>
-<a href="https://github.com/EugOT/Zupancic_2022/blob/da268b6a5c100e8ae3d8ec63def157b3ad90e1dd/docs/figure/dynamic_oc3-pop.Rmd/plot-dotplot-stage-glur-glu-1.png" target="_blank">da268b6</a>
+<a href="https://github.com/Harkany-Lab/Zupancic_2022/blob/da268b6a5c100e8ae3d8ec63def157b3ad90e1dd/docs/figure/dynamic_oc3-pop.Rmd/plot-dotplot-stage-glur-glu-1.png" target="_blank">da268b6</a>
 </td>
 <td>
 EugOT
@@ -1618,7 +1789,7 @@ EugOT
 </tr>
 <tr>
 <td>
-<a href="https://github.com/EugOT/Zupancic_2022/blob/fc91ebfefe016658ac8a8b15a4aa9ad9a313ab75/docs/figure/dynamic_oc3-pop.Rmd/plot-dotplot-stage-glur-glu-1.png" target="_blank">fc91ebf</a>
+<a href="https://github.com/Harkany-Lab/Zupancic_2022/blob/fc91ebfefe016658ac8a8b15a4aa9ad9a313ab75/docs/figure/dynamic_oc3-pop.Rmd/plot-dotplot-stage-glur-glu-1.png" target="_blank">fc91ebf</a>
 </td>
 <td>
 EugOT
@@ -1629,7 +1800,7 @@ EugOT
 </tr>
 <tr>
 <td>
-<a href="https://github.com/EugOT/Zupancic_2022/blob/6a77e95d62e71bb92e766f552b45cccfc254c23e/docs/figure/dynamic_oc3-pop.Rmd/plot-dotplot-stage-glur-glu-1.png" target="_blank">6a77e95</a>
+<a href="https://github.com/Harkany-Lab/Zupancic_2022/blob/6a77e95d62e71bb92e766f552b45cccfc254c23e/docs/figure/dynamic_oc3-pop.Rmd/plot-dotplot-stage-glur-glu-1.png" target="_blank">6a77e95</a>
 </td>
 <td>
 EugOT
@@ -1642,23 +1813,297 @@ EugOT
 </table>
 </div>
 </div>
+<pre class="r"><code>sbs_mtx_oc &lt;-
+    onecut %&gt;%
+    GetAssayData(&quot;data&quot;, &quot;RNA&quot;) %&gt;%
+    as.data.frame() %&gt;%
+    t()
+rownames(sbs_mtx_oc) &lt;- colnames(onecut)
+
+# Filter features
+filt_low_genes2 &lt;-
+    colSums(sbs_mtx_oc) %&gt;%
+    .[. &gt; quantile(., 0.4)] %&gt;%
+    names()
+sbs_mtx_oc %&lt;&gt;% .[, filt_low_genes2]
+
+min_filt_vector2 &lt;-
+    sbs_mtx_oc %&gt;%
+    as_tibble() %&gt;%
+    select(all_of(filt_low_genes2)) %&gt;%
+    summarise(across(.fns = ~ quantile(.x, .005))) %&gt;%
+    as.list %&gt;%
+    map(as.double) %&gt;%
+    simplify %&gt;%
+    .[filt_low_genes2]
+
+# Prepare table of intersection sets analysis
+content_sbs_mtx_oc &lt;-
+    (sbs_mtx_oc &gt; min_filt_vector2) %&gt;%
+    as_tibble() %&gt;%
+    mutate_all(as.numeric)
+
+
+onecut$gaba_status &lt;-
+  content_sbs_mtx_oc %&gt;%
+  select(Gad1, Gad2, Slc32a1) %&gt;%
+  mutate(gaba = if_all(.fns = ~ .x &gt; 0)) %&gt;%
+  .$gaba
+
+onecut$gaba_occurs &lt;-
+  content_sbs_mtx_oc %&gt;%
+  select(Gad1, Gad2, Slc32a1) %&gt;%
+  mutate(gaba = if_any(.fns = ~ .x &gt; 0)) %&gt;%
+  .$gaba
+
+onecut$glut_status &lt;-
+  content_sbs_mtx_oc %&gt;%
+  select(Slc17a6) %&gt;%
+  mutate(glut = Slc17a6 &gt; 0) %&gt;%
+  .$glut
+
+oc_fin &lt;-
+  subset(onecut,
+    cells = union(
+      WhichCells(onecut,
+        expression = gaba_status == TRUE &amp; glut_status == FALSE),
+      WhichCells(onecut,
+        expression = glut_status == TRUE &amp; gaba_occurs == FALSE)))
+
+oc_fin$status &lt;- oc_fin$gaba_status %&gt;%
+  if_else(true = &quot;GABAergic&quot;,
+    false = &quot;glutamatergic&quot;)
+Idents(oc_fin) &lt;- &quot;status&quot;
+
+sbs_mtx_oc &lt;-
+    oc_fin %&gt;%
+    GetAssayData(&quot;data&quot;, &quot;RNA&quot;) %&gt;%
+    as.data.frame() %&gt;%
+    t()
+rownames(sbs_mtx_oc) &lt;- colnames(oc_fin)
+
+# Filter features
+filt_low_genes2 &lt;-
+    colSums(sbs_mtx_oc) %&gt;%
+    .[. &gt; quantile(., 0.4)] %&gt;%
+    names()
+sbs_mtx_oc %&lt;&gt;% .[, filt_low_genes2]
+
+min_filt_vector2 &lt;-
+    sbs_mtx_oc %&gt;%
+    as_tibble() %&gt;%
+    select(all_of(filt_low_genes2)) %&gt;%
+    summarise(across(.fns = ~ quantile(.x, .005))) %&gt;%
+    as.list %&gt;%
+    map(as.double) %&gt;%
+    simplify %&gt;%
+    .[filt_low_genes2]
+
+# Prepare table of intersection sets analysis
+content_sbs_mtx_oc &lt;-
+    (sbs_mtx_oc &gt; min_filt_vector2) %&gt;%
+    as_tibble() %&gt;%
+    mutate_all(as.numeric)</code></pre>
+<pre class="r"><code>upset(as.data.frame(content_sbs_mtx_oc),
+  order.by = &quot;freq&quot;,
+  sets.x.label = &quot;Number of cells&quot;,
+  text.scale = c(2, 1.6, 2, 1.3, 2, 3),
+  nsets = 15,
+  sets = c(&quot;Gad1&quot;, &quot;Gad2&quot;, &quot;Slc32a1&quot;, &quot;Slc17a6&quot;, &quot;Onecut3&quot;),
+  queries = list(
+    list(
+      query = intersects,
+      params = list(&quot;Gad1&quot;, &quot;Gad2&quot;, &quot;Slc32a1&quot;, &quot;Onecut3&quot;),
+      active = T
+    ),
+    list(
+      query = intersects,
+      params = list(&quot;Slc17a6&quot;, &quot;Onecut3&quot;),
+      active = T
+    )
+  ),
+  nintersects = 20,
+  empty.intersections = NULL
+)</code></pre>
+<p><img src="figure/dynamic_oc3-pop.Rmd/plot-upset-sbs-oc3-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>upset(as.data.frame(content_sbs_mtx_oc),
+  order.by = &quot;freq&quot;,
+  sets.x.label = &quot;Number of cells&quot;,
+  text.scale = c(2, 1.6, 2, 1.3, 2, 3),
+  nsets = 15,
+  sets = c(&quot;Th&quot;, &quot;Trh&quot;, &quot;Slc32a1&quot;, &quot;Slc17a6&quot;, &quot;Onecut3&quot;),
+  queries = list(
+    list(
+      query = intersects,
+      params = list(&quot;Th&quot;, &quot;Slc32a1&quot;, &quot;Onecut3&quot;),
+      active = T
+    ),
+    list(
+      query = intersects,
+      params = list(&quot;Trh&quot;, &quot;Slc17a6&quot;, &quot;Onecut3&quot;),
+      active = T
+    )
+  ),
+  nintersects = 20,
+  empty.intersections = NULL
+)</code></pre>
+<p><img src="figure/dynamic_oc3-pop.Rmd/plot-upset-sbs-oc3-mod-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>
+sbs_mtx_oc_full &lt;- content_sbs_mtx_oc |&gt; 
+  select(any_of(c(neurotrans, glutr, gabar, &quot;Trh&quot;, &quot;Th&quot;, &quot;Onecut3&quot;))) |&gt; 
+  dplyr::bind_cols(oc_fin@meta.data)
+
+sbs_mtx_oc_full |&gt; glimpse()
+# Rows: 1,068
+# Columns: 74
+# $ Slc17a6          &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,…
+# $ Slc17a8          &lt;dbl&gt; 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0,…
+# $ Slc1a1           &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0,…
+# $ Slc1a2           &lt;dbl&gt; 1, 0, 0, 1, 0, 1, 0, 0, 0, 0, 1, 0, 1, 0, 1, 1, 0, 0,…
+# $ Slc1a6           &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0,…
+# $ Gad1             &lt;dbl&gt; 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,…
+# $ Slc32a1          &lt;dbl&gt; 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,…
+# $ Slc6a1           &lt;dbl&gt; 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0,…
+# $ Gria1            &lt;dbl&gt; 1, 1, 1, 1, 0, 1, 0, 1, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0,…
+# $ Gria2            &lt;dbl&gt; 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1,…
+# $ Gria3            &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 1, 0, 0, 0,…
+# $ Gria4            &lt;dbl&gt; 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,…
+# $ Grid1            &lt;dbl&gt; 1, 1, 1, 1, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0,…
+# $ Grid2            &lt;dbl&gt; 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0,…
+# $ Grik1            &lt;dbl&gt; 0, 0, 0, 1, 1, 1, 0, 0, 1, 0, 1, 0, 1, 1, 0, 0, 0, 1,…
+# $ Grik2            &lt;dbl&gt; 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,…
+# $ Grik3            &lt;dbl&gt; 1, 1, 0, 1, 0, 1, 0, 1, 1, 0, 0, 0, 1, 0, 1, 1, 1, 1,…
+# $ Grik4            &lt;dbl&gt; 0, 1, 1, 1, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 0,…
+# $ Grik5            &lt;dbl&gt; 1, 1, 1, 0, 1, 0, 1, 1, 1, 1, 0, 1, 0, 1, 1, 1, 0, 0,…
+# $ Grin1            &lt;dbl&gt; 1, 1, 1, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 0, 0,…
+# $ Grin2a           &lt;dbl&gt; 1, 1, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0,…
+# $ Grin2b           &lt;dbl&gt; 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 0, 1, 1, 1, 1, 0, 0,…
+# $ Grin2d           &lt;dbl&gt; 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,…
+# $ Grin3a           &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 1, 1, 0, 0, 0, 0,…
+# $ Grm1             &lt;dbl&gt; 0, 1, 0, 1, 0, 0, 0, 0, 1, 1, 0, 1, 1, 0, 1, 1, 0, 0,…
+# $ Grm5             &lt;dbl&gt; 1, 1, 1, 1, 1, 1, 0, 1, 1, 0, 1, 1, 1, 1, 1, 1, 0, 1,…
+# $ Grm2             &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,…
+# $ Grm3             &lt;dbl&gt; 1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 0, 0, 1, 1, 0, 0,…
+# $ Grm4             &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,…
+# $ Grm7             &lt;dbl&gt; 0, 0, 0, 1, 1, 0, 0, 1, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0,…
+# $ Grm8             &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 1, 0, 0,…
+# $ Gabra1           &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 1, 0, 0, 1, 0, 0,…
+# $ Gabra2           &lt;dbl&gt; 1, 1, 0, 1, 0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 1, 1, 0, 0,…
+# $ Gabra3           &lt;dbl&gt; 1, 0, 0, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0,…
+# $ Gabra4           &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,…
+# $ Gabra5           &lt;dbl&gt; 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 1, 0, 1, 0, 1, 0, 0,…
+# $ Gabrb1           &lt;dbl&gt; 1, 1, 1, 1, 0, 1, 0, 0, 1, 0, 1, 1, 1, 1, 1, 0, 0, 0,…
+# $ Gabrb2           &lt;dbl&gt; 0, 0, 0, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 0,…
+# $ Gabrb3           &lt;dbl&gt; 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1,…
+# $ Gabrg1           &lt;dbl&gt; 1, 1, 0, 0, 1, 0, 1, 1, 1, 0, 1, 1, 0, 0, 1, 1, 1, 0,…
+# $ Gabrg2           &lt;dbl&gt; 1, 0, 0, 1, 0, 0, 0, 0, 1, 1, 1, 0, 1, 0, 0, 1, 0, 1,…
+# $ Gabrg3           &lt;dbl&gt; 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0,…
+# $ Gabre            &lt;dbl&gt; 1, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,…
+# $ Gabrq            &lt;dbl&gt; 1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0,…
+# $ Gabbr1           &lt;dbl&gt; 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 1,…
+# $ Gabbr2           &lt;dbl&gt; 0, 0, 0, 1, 0, 1, 0, 0, 1, 0, 1, 1, 1, 0, 1, 0, 0, 0,…
+# $ Trh              &lt;dbl&gt; 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,…
+# $ Th               &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0,…
+# $ Onecut3          &lt;dbl&gt; 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 1, 0,…
+# $ nGene            &lt;int&gt; 3456, 2277, 1660, 2308, 1478, 2216, 955, 2135, 3856, …
+# $ nUMI             &lt;dbl&gt; 8525, 4649, 2794, 5118, 3123, 4215, 1355, 3898, 9751,…
+# $ orig.ident       &lt;chr&gt; &quot;FC2P23&quot;, &quot;FC2P23&quot;, &quot;FC2P23&quot;, &quot;FC2P10&quot;, &quot;FC2P10&quot;, &quot;FC…
+# $ res.0.2          &lt;chr&gt; &quot;5&quot;, &quot;5&quot;, &quot;5&quot;, &quot;5&quot;, &quot;5&quot;, &quot;5&quot;, &quot;0&quot;, &quot;5&quot;, &quot;3&quot;, &quot;0&quot;, &quot;3&quot;…
+# $ res.0.4          &lt;chr&gt; &quot;5&quot;, &quot;5&quot;, &quot;5&quot;, &quot;5&quot;, &quot;5&quot;, &quot;5&quot;, &quot;0&quot;, &quot;5&quot;, &quot;21&quot;, &quot;4&quot;, &quot;7…
+# $ res.0.8          &lt;chr&gt; &quot;19&quot;, &quot;19&quot;, &quot;19&quot;, &quot;26&quot;, &quot;19&quot;, &quot;19&quot;, &quot;1&quot;, &quot;19&quot;, &quot;17&quot;, …
+# $ res.1.2          &lt;chr&gt; &quot;19&quot;, &quot;19&quot;, &quot;19&quot;, &quot;27&quot;, &quot;19&quot;, &quot;19&quot;, &quot;6&quot;, &quot;19&quot;, &quot;28&quot;, …
+# $ res.2            &lt;chr&gt; &quot;20&quot;, &quot;20&quot;, &quot;20&quot;, &quot;27&quot;, &quot;20&quot;, &quot;20&quot;, &quot;13&quot;, &quot;20&quot;, &quot;34&quot;,…
+# $ tree.ident       &lt;int&gt; 9, 9, 9, 9, 9, 9, 9, 9, 11, 11, 11, 11, 11, 11, 12, 1…
+# $ pro_Inter        &lt;chr&gt; &quot;13&quot;, &quot;13&quot;, &quot;13&quot;, &quot;13&quot;, &quot;13&quot;, &quot;13&quot;, &quot;13&quot;, &quot;13&quot;, &quot;18&quot;,…
+# $ pro_Enter        &lt;chr&gt; &quot;13&quot;, &quot;13&quot;, &quot;13&quot;, &quot;13&quot;, &quot;13&quot;, &quot;13&quot;, &quot;13&quot;, &quot;13&quot;, &quot;18&quot;,…
+# $ tree_final       &lt;fct&gt; 11, 11, 11, 11, 11, 11, 11, 11, 8, 8, 8, 8, 8, 8, 6, …
+# $ subtree          &lt;fct&gt; 10, 10, 10, 10, 10, 10, 10, 10, 12, 12, 12, 12, 12, 1…
+# $ prim_walktrap    &lt;fct&gt; 1, 1, 1, 1, 1, 1, 3, 1, 3, 3, 3, 15, 3, 3, 3, 12, 11,…
+# $ umi_per_gene     &lt;dbl&gt; 2.466725, 2.041722, 1.683133, 2.217504, 2.112991, 1.9…
+# $ log_umi_per_gene &lt;dbl&gt; 0.3921207, 0.3099965, 0.2261183, 0.3458645, 0.3248976…
+# $ nCount_RNA       &lt;dbl&gt; 8525, 4649, 2794, 5118, 3123, 4215, 1355, 3898, 9751,…
+# $ nFeature_RNA     &lt;int&gt; 3456, 2277, 1660, 2308, 1478, 2216, 955, 2135, 3856, …
+# $ wtree            &lt;fct&gt; 10, 10, 10, 10, 10, 10, 11, 10, 11, 11, 11, 21, 11, 1…
+# $ age              &lt;fct&gt; P23, P23, P23, P10, P10, P10, E17, E15, P23, P23, P10…
+# $ postnat          &lt;int&gt; 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0,…
+# $ gaba_status      &lt;lgl&gt; TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE,…
+# $ gaba_occurs      &lt;lgl&gt; TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE,…
+# $ glut_status      &lt;lgl&gt; FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALS…
+# $ status           &lt;chr&gt; &quot;GABAergic&quot;, &quot;GABAergic&quot;, &quot;GABAergic&quot;, &quot;GABAergic&quot;, &quot;…
+
+sbs_mtx_oc_full$modulator &lt;- 
+  sbs_mtx_oc_full %&gt;%
+  select(Trh, Th) %&gt;%
+  mutate(modulator = if_any(.fns = ~ .x &gt; 0)) %&gt;%
+  .$modulator
+
+sbs_mtx_oc_full$oc3 &lt;- 
+  (sbs_mtx_oc_full$Onecut3 &gt; 0)
+
+library(ggstatsplot)
+# You can cite this package as:
+#      Patil, I. (2021). Visualizations with statistical details: The &#39;ggstatsplot&#39; approach.
+#      Journal of Open Source Software, 6(61), 3167, doi:10.21105/joss.03167
+# 
+# Attaching package: &#39;ggstatsplot&#39;
+# The following object is masked from &#39;package:future&#39;:
+# 
+#     %&lt;-%
+# for reproducibility
+set.seed(123)
+
+## plot
+# ggpiestats(
+#   data = sbs_mtx_oc_full,
+#   x = modulator,
+#   y = status,
+#   perc.k = 1,
+#   package = &quot;ggsci&quot;,
+#   palette = &quot;category10_d3&quot;,
+# ) + # further modification with `{ggplot2}` commands
+#   ggplot2::theme(
+#     plot.title = ggplot2::element_text(
+#       color = &quot;black&quot;,
+#       size = 14,
+#       hjust = 0
+#     )
+#   )
+
+# plot
+grouped_ggpiestats(
+  # arguments relevant for `ggpiestats()`
+  data = sbs_mtx_oc_full,
+  x = modulator,
+  y = oc3,
+  grouping.var = status,
+  perc.k = 1,
+  package = &quot;ggsci&quot;,
+  palette = &quot;category10_d3&quot;,
+  # arguments relevant for `combine_plots()`
+  title.text = &quot;Neuromodulator specification of onecut-driven hypothalamic neuronal lineages by Onecut3 and main neurotransmitter expression&quot;,
+  caption.text = &quot;Asterisks denote results from proportion tests; \n***: p &lt; 0.001, ns: non-significant&quot;,
+  plotgrid.args = list(nrow = 2)
+)</code></pre>
+<p><img src="figure/dynamic_oc3-pop.Rmd/plot-piecharts-sbs-oc3-chisqr-1.png" width="1152" style="display: block; margin: auto;" /></p>
 <br>
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
-<span class="glyphicon glyphicon-wrench" aria-hidden="true"></span> Session information
+<span class="glyphicon glyphicon-wrench" aria-hidden="true"></span>
+Session information
 </button>
 </p>
 <div id="workflowr-sessioninfo" class="collapse">
 <pre class="r"><code>sessionInfo()
-# R version 4.1.2 (2021-11-01)
-# Platform: x86_64-redhat-linux-gnu (64-bit)
-# Running under: Rocky Linux 8.5 (Green Obsidian)
+# R version 4.2.1 (2022-06-23)
+# Platform: x86_64-pc-linux-gnu (64-bit)
+# Running under: Ubuntu 22.04.1 LTS
 # 
 # Matrix products: default
-# BLAS/LAPACK: /usr/lib64/libopenblas-r0.3.12.so
+# BLAS:   /usr/lib/x86_64-linux-gnu/openblas-pthread/libblas.so.3
+# LAPACK: /usr/lib/x86_64-linux-gnu/openblas-pthread/libopenblasp-r0.3.20.so
 # 
 # locale:
-#  [1] LC_CTYPE=C.UTF-8           LC_NUMERIC=C              
+#  [1] LC_CTYPE=en_US.UTF-8       LC_NUMERIC=C              
 #  [3] LC_TIME=en_US.UTF-8        LC_COLLATE=en_US.UTF-8    
 #  [5] LC_MONETARY=en_US.UTF-8    LC_MESSAGES=en_US.UTF-8   
 #  [7] LC_PAPER=en_US.UTF-8       LC_NAME=C                 
@@ -1669,111 +2114,111 @@ EugOT
 # [1] stats     graphics  grDevices utils     datasets  methods   base     
 # 
 # other attached packages:
-#  [1] Nebulosa_1.4.0        patchwork_1.1.1       UpSetR_1.4.0         
-#  [4] SeuratDisk_0.0.0.9019 SeuratWrappers_0.3.0  SeuratObject_4.0.4   
-#  [7] Seurat_4.0.6          sctransform_0.3.2     future_1.23.0        
-# [10] zeallot_0.1.0         magrittr_2.0.1        forcats_0.5.1        
-# [13] stringr_1.4.0         dplyr_1.0.7           purrr_0.3.4          
-# [16] readr_2.1.1           tidyr_1.1.4           tibble_3.1.6         
-# [19] ggplot2_3.3.5         tidyverse_1.3.1       here_1.0.1           
-# [22] workflowr_1.7.0      
+#  [1] ggstatsplot_0.9.4     Nebulosa_1.6.0        patchwork_1.1.2      
+#  [4] UpSetR_1.4.0          SeuratDisk_0.0.0.9020 SeuratWrappers_0.3.0 
+#  [7] sp_1.5-0              SeuratObject_4.1.2    Seurat_4.2.0         
+# [10] sctransform_0.3.5     future_1.28.0         zeallot_0.1.0        
+# [13] magrittr_2.0.3        forcats_0.5.2         stringr_1.4.1        
+# [16] dplyr_1.0.10          purrr_0.3.4           readr_2.1.2          
+# [19] tidyr_1.2.1           tibble_3.1.8          ggplot2_3.3.6        
+# [22] tidyverse_1.3.2       here_1.0.1            workflowr_1.7.0      
 # 
 # loaded via a namespace (and not attached):
-#   [1] scattermore_0.7             R.methodsS3_1.8.1          
-#   [3] coda_0.19-4                 ragg_1.2.1                 
-#   [5] bit64_4.0.5                 knitr_1.37                 
-#   [7] irlba_2.3.5                 DelayedArray_0.20.0        
-#   [9] R.utils_2.11.0              data.table_1.14.2          
-#  [11] rpart_4.1-15                RCurl_1.98-1.5             
-#  [13] generics_0.1.1              BiocGenerics_0.40.0        
-#  [15] callr_3.7.0                 cowplot_1.1.1              
-#  [17] RANN_2.6.1                  correlation_0.7.1          
-#  [19] bit_4.0.4                   tzdb_0.2.0                 
-#  [21] spatstat.data_2.1-2         xml2_1.3.3                 
-#  [23] lubridate_1.8.0             httpuv_1.6.5               
-#  [25] SummarizedExperiment_1.24.0 assertthat_0.2.1           
-#  [27] WRS2_1.1-3                  xfun_0.29                  
-#  [29] hms_1.1.1                   jquerylib_0.1.4            
-#  [31] evaluate_0.14               promises_1.2.0.1           
-#  [33] fansi_1.0.0                 dbplyr_2.1.1               
-#  [35] readxl_1.3.1                igraph_1.2.11              
-#  [37] DBI_1.1.2                   htmlwidgets_1.5.4          
-#  [39] reshape_0.8.8               spatstat.geom_2.3-1        
-#  [41] kSamples_1.2-9              stats4_4.1.2               
-#  [43] Rmpfr_0.8-7                 paletteer_1.4.0            
-#  [45] ellipsis_0.3.2              ks_1.13.3                  
-#  [47] backports_1.4.1             insight_0.15.0             
-#  [49] deldir_1.0-6                MatrixGenerics_1.6.0       
-#  [51] vctrs_0.3.8                 SingleCellExperiment_1.16.0
-#  [53] Biobase_2.54.0              remotes_2.4.2              
-#  [55] ROCR_1.0-11                 abind_1.4-5                
-#  [57] cachem_1.0.6                withr_2.4.3                
-#  [59] vroom_1.5.7                 mclust_5.4.9               
-#  [61] goftest_1.2-3               cluster_2.1.2              
-#  [63] lazyeval_0.2.2              crayon_1.4.2               
-#  [65] hdf5r_1.3.5                 labeling_0.4.2             
-#  [67] pkgconfig_2.0.3             SuppDists_1.1-9.7          
-#  [69] GenomeInfoDb_1.30.0         nlme_3.1-153               
-#  [71] statsExpressions_1.2.0      rlang_0.4.12               
-#  [73] globals_0.14.0              lifecycle_1.0.1            
-#  [75] miniUI_0.1.1.1              MatrixModels_0.5-0         
-#  [77] modelr_0.1.8                rsvd_1.0.5                 
-#  [79] cellranger_1.1.0            rprojroot_2.0.2            
-#  [81] polyclip_1.10-0             matrixStats_0.61.0         
-#  [83] lmtest_0.9-39               datawizard_0.2.2           
-#  [85] Matrix_1.3-4                mc2d_0.1-21                
-#  [87] zoo_1.8-9                   reprex_2.0.1               
-#  [89] whisker_0.4                 ggridges_0.5.3             
-#  [91] processx_3.5.2              png_0.1-7                  
-#  [93] viridisLite_0.4.0           PMCMRplus_1.9.3            
-#  [95] parameters_0.16.0           bitops_1.0-7               
-#  [97] getPass_0.2-2               R.oo_1.24.0                
-#  [99] KernSmooth_2.23-20          multcompView_0.1-8         
-# [101] parallelly_1.30.0           S4Vectors_0.32.3           
-# [103] scales_1.1.1                memoise_2.0.1              
-# [105] plyr_1.8.6                  ica_1.0-2                  
-# [107] zlibbioc_1.40.0             compiler_4.1.2             
-# [109] RColorBrewer_1.1-2          fitdistrplus_1.1-6         
-# [111] snakecase_0.11.0            cli_3.1.0                  
-# [113] XVector_0.34.0              listenv_0.8.0              
-# [115] pbapply_1.5-0               ps_1.6.0                   
-# [117] ggside_0.2.0                MASS_7.3-54                
-# [119] mgcv_1.8-38                 tidyselect_1.1.1           
-# [121] stringi_1.7.6               textshaping_0.3.6          
-# [123] highr_0.9                   yaml_2.2.1                 
-# [125] ggrepel_0.9.1               grid_4.1.2                 
-# [127] sass_0.4.0                  tools_4.1.2                
-# [129] future.apply_1.8.1          parallel_4.1.2             
-# [131] rstudioapi_0.13             git2r_0.29.0               
-# [133] janitor_2.1.0               gridExtra_2.3              
-# [135] farver_2.1.0                Rtsne_0.15                 
-# [137] digest_0.6.29               BiocManager_1.30.16        
-# [139] shiny_1.7.1                 pracma_2.3.6               
-# [141] BWStest_0.2.2               Rcpp_1.0.8                 
-# [143] GenomicRanges_1.46.1        broom_0.7.11               
-# [145] BayesFactor_0.9.12-4.3      performance_0.8.0          
-# [147] later_1.3.0                 RcppAnnoy_0.0.19           
-# [149] httr_1.4.2                  effectsize_0.5             
-# [151] colorspace_2.0-2            rvest_1.0.2                
-# [153] fs_1.5.2                    tensor_1.5                 
-# [155] reticulate_1.22             IRanges_2.28.0             
-# [157] splines_4.1.2               uwot_0.1.11                
-# [159] rematch2_2.1.2              spatstat.utils_2.3-0       
-# [161] systemfonts_1.0.3           plotly_4.10.0              
-# [163] xtable_1.8-4                gmp_0.6-2.1                
-# [165] jsonlite_1.7.3              R6_2.5.1                   
-# [167] pillar_1.6.4                htmltools_0.5.2            
-# [169] mime_0.12                   glue_1.6.0                 
-# [171] fastmap_1.1.0               codetools_0.2-18           
-# [173] mvtnorm_1.1-3               utf8_1.2.2                 
-# [175] lattice_0.20-45             bslib_0.3.1                
-# [177] spatstat.sparse_2.1-0       leiden_0.3.9               
-# [179] gtools_3.9.2                survival_3.2-13            
-# [181] rmarkdown_2.11              munsell_0.5.0              
-# [183] GenomeInfoDbData_1.2.7      ggstatsplot_0.9.0          
-# [185] haven_2.4.3                 reshape2_1.4.4             
-# [187] gtable_0.3.0                bayestestR_0.11.5          
-# [189] spatstat.core_2.3-2</code></pre>
+#   [1] estimability_1.4.1          scattermore_0.8            
+#   [3] R.methodsS3_1.8.2           coda_0.19-4                
+#   [5] ragg_1.2.3                  bit64_4.0.5                
+#   [7] knitr_1.40                  irlba_2.3.5                
+#   [9] multcomp_1.4-20             DelayedArray_0.22.0        
+#  [11] R.utils_2.12.0              data.table_1.14.2          
+#  [13] rpart_4.1.16                RCurl_1.98-1.8             
+#  [15] generics_0.1.3              BiocGenerics_0.42.0        
+#  [17] callr_3.7.2                 cowplot_1.1.1              
+#  [19] TH.data_1.1-1               RANN_2.6.1                 
+#  [21] correlation_0.8.2           bit_4.0.4                  
+#  [23] tzdb_0.3.0                  spatstat.data_2.2-0        
+#  [25] xml2_1.3.3                  lubridate_1.8.0            
+#  [27] httpuv_1.6.6                SummarizedExperiment_1.26.1
+#  [29] assertthat_0.2.1            gargle_1.2.1               
+#  [31] xfun_0.33                   hms_1.1.2                  
+#  [33] jquerylib_0.1.4             evaluate_0.16              
+#  [35] promises_1.2.0.1            fansi_1.0.3                
+#  [37] dbplyr_2.2.1                readxl_1.4.1               
+#  [39] igraph_1.3.5                DBI_1.1.3                  
+#  [41] htmlwidgets_1.5.4           spatstat.geom_2.4-0        
+#  [43] googledrive_2.0.0           stats4_4.2.1               
+#  [45] paletteer_1.4.1             ellipsis_0.3.2             
+#  [47] ks_1.13.5                   backports_1.4.1            
+#  [49] insight_0.18.4              prismatic_1.1.1            
+#  [51] deldir_1.0-6                MatrixGenerics_1.8.1       
+#  [53] vctrs_0.4.2                 SingleCellExperiment_1.18.1
+#  [55] Biobase_2.56.0              remotes_2.4.2              
+#  [57] ROCR_1.0-11                 abind_1.4-5                
+#  [59] cachem_1.0.6                withr_2.5.0                
+#  [61] progressr_0.11.0            rgdal_1.5-32               
+#  [63] vroom_1.5.7                 emmeans_1.8.1-1            
+#  [65] mclust_5.4.10               goftest_1.2-3              
+#  [67] cluster_2.1.4               lazyeval_0.2.2             
+#  [69] crayon_1.5.2                hdf5r_1.3.6                
+#  [71] labeling_0.4.2              pkgconfig_2.0.3            
+#  [73] GenomeInfoDb_1.32.4         nlme_3.1-159               
+#  [75] statsExpressions_1.3.3      rlang_1.0.6                
+#  [77] globals_0.16.1              lifecycle_1.0.2            
+#  [79] miniUI_0.1.1.1              MatrixModels_0.5-1         
+#  [81] sandwich_3.0-2              modelr_0.1.9               
+#  [83] rsvd_1.0.5                  cellranger_1.1.0           
+#  [85] rprojroot_2.0.3             polyclip_1.10-0            
+#  [87] matrixStats_0.62.0          lmtest_0.9-40              
+#  [89] datawizard_0.6.1            Matrix_1.5-1               
+#  [91] zoo_1.8-11                  reprex_2.0.2               
+#  [93] whisker_0.4                 ggridges_0.5.4             
+#  [95] processx_3.7.0              googlesheets4_1.0.1        
+#  [97] png_0.1-7                   viridisLite_0.4.1          
+#  [99] parameters_0.18.2           bitops_1.0-7               
+# [101] getPass_0.2-2               R.oo_1.25.0                
+# [103] KernSmooth_2.23-20          parallelly_1.32.1          
+# [105] spatstat.random_2.2-0       S4Vectors_0.34.0           
+# [107] scales_1.2.1                plyr_1.8.7                 
+# [109] ica_1.0-3                   zlibbioc_1.42.0            
+# [111] compiler_4.2.1              RColorBrewer_1.1-3         
+# [113] fitdistrplus_1.1-8          snakecase_0.11.0           
+# [115] cli_3.4.1                   XVector_0.36.0             
+# [117] listenv_0.8.0               pbapply_1.5-0              
+# [119] ps_1.7.1                    ggside_0.2.1               
+# [121] MASS_7.3-58.1               mgcv_1.8-40                
+# [123] tidyselect_1.1.2            stringi_1.7.8              
+# [125] textshaping_0.3.6           highr_0.9                  
+# [127] yaml_2.3.5                  ggrepel_0.9.1.9999         
+# [129] grid_4.2.1                  sass_0.4.2                 
+# [131] tools_4.2.1                 future.apply_1.9.1         
+# [133] parallel_4.2.1              rstudioapi_0.14            
+# [135] git2r_0.30.1                janitor_2.1.0.9000         
+# [137] gridExtra_2.3               farver_2.1.1               
+# [139] Rtsne_0.16                  digest_0.6.29              
+# [141] BiocManager_1.30.18         rgeos_0.5-9                
+# [143] shiny_1.7.2                 pracma_2.4.2               
+# [145] Rcpp_1.0.9                  GenomicRanges_1.48.0       
+# [147] broom_1.0.1                 BayesFactor_0.9.12-4.4     
+# [149] performance_0.9.2           later_1.3.0                
+# [151] RcppAnnoy_0.0.19            httr_1.4.4                 
+# [153] effectsize_0.7.0.5          colorspace_2.0-3           
+# [155] rvest_1.0.3                 fs_1.5.2                   
+# [157] tensor_1.5                  reticulate_1.26            
+# [159] IRanges_2.30.1              splines_4.2.1              
+# [161] uwot_0.1.14                 rematch2_2.1.2             
+# [163] spatstat.utils_2.3-1        systemfonts_1.0.4          
+# [165] plotly_4.10.0               xtable_1.8-4               
+# [167] jsonlite_1.8.1              R6_2.5.1                   
+# [169] pillar_1.8.1                htmltools_0.5.3            
+# [171] mime_0.12                   glue_1.6.2                 
+# [173] fastmap_1.1.0               codetools_0.2-18           
+# [175] mvtnorm_1.1-3               utf8_1.2.2                 
+# [177] lattice_0.20-45             bslib_0.4.0                
+# [179] spatstat.sparse_2.1-1       leiden_0.4.3               
+# [181] survival_3.4-0              rmarkdown_2.16             
+# [183] munsell_0.5.0               GenomeInfoDbData_1.2.8     
+# [185] haven_2.5.1                 reshape2_1.4.4             
+# [187] gtable_0.3.1                bayestestR_0.13.0          
+# [189] spatstat.core_2.4-4</code></pre>
 </div>
 </div>
 
@@ -1789,6 +2234,8 @@ footer is added to webpages before the MathJax javascript. -->
     "HTML-CSS": { availableFonts: ["TeX"] }
   });
 </script>
+
+
 
 
 </div>
