@@ -178,6 +178,30 @@ upset(as.data.frame(content_mtx_oc3),
 )
 ```
 
+```{r plot-upset-oc3-mod}
+upset(as.data.frame(content_mtx_oc3),
+  order.by = "freq",
+  sets.x.label = "Number of cells",
+  text.scale = c(2, 1.6, 2, 1.3, 2, 3),
+  nsets = 15,
+  sets = c("Th", "Trh", "Slc32a1", "Slc17a6"),
+  queries = list(
+    list(
+      query = intersects,
+      params = list("Th", "Slc32a1"),
+      active = T
+    ),
+    list(
+      query = intersects,
+      params = list("Trh", "Slc17a6"),
+      active = T
+    )
+  ),
+  nintersects = 60,
+  empty.intersections = "on"
+)
+```
+
 Regroup factor by stages for more balanced groups
 ```{r derive-stages}
 onecut3$age %>% forcats::fct_count()
@@ -279,7 +303,7 @@ DotPlot(object = oc3_fin_neurotrans$glutamatergic,
 ```
 
 Expression of glutamate receptors in GABAergic Onecut3 positive cells
-```{r plot-dotplot-age-glur-gaba}
+```{r plot-dotplot-age-glur-gaba, fig.height=5, fig.width=9}
 DotPlot(object = oc3_fin_neurotrans$GABAergic,
         features = glutr,
         group.by = "age",
@@ -289,7 +313,7 @@ DotPlot(object = oc3_fin_neurotrans$GABAergic,
 ```
 
 Expression of glutamate receptors in glutamatergic Onecut3 positive cells
-```{r plot-dotplot-age-glur-glu}
+```{r plot-dotplot-age-glur-glu, fig.height=5, fig.width=9}
 DotPlot(object = oc3_fin_neurotrans$glutamatergic,
         features = glutr,
         group.by = "age",
@@ -310,7 +334,7 @@ DotPlot(object = oc3_fin_neurotrans$GABAergic,
 ```
 
 Expression of GABA receptors in glutamatergic Onecut3 positive cells
-```{r plot-dotplot-stage-gabar-glu}
+```{r plot-dotplot-stage-gabar-glu, fig.height=5, fig.width=9}
 DotPlot(object = oc3_fin_neurotrans$glutamatergic,
         features = gabar,
         group.by = "stage",
@@ -320,7 +344,7 @@ DotPlot(object = oc3_fin_neurotrans$glutamatergic,
 ```
 
 Expression of glutamate receptors in GABAergic Onecut3 positive cells
-```{r plot-dotplot-stage-glur-gaba}
+```{r plot-dotplot-stage-glur-gaba, fig.height=5, fig.width=9}
 DotPlot(object = oc3_fin_neurotrans$GABAergic,
         features = glutr,
         group.by = "stage",
@@ -330,7 +354,7 @@ DotPlot(object = oc3_fin_neurotrans$GABAergic,
 ```
 
 Expression of glutamate receptors in glutamatergic Onecut3 positive cells
-```{r plot-dotplot-stage-glur-glu}
+```{r plot-dotplot-stage-glur-glu, fig.height=5, fig.width=9}
 DotPlot(object = oc3_fin_neurotrans$glutamatergic,
         features = glutr,
         group.by = "stage",
@@ -340,6 +364,201 @@ DotPlot(object = oc3_fin_neurotrans$glutamatergic,
 ```
 
 
-```{r holder}
+```{r drv-sbs-mtx}
+sbs_mtx_oc <-
+    onecut %>%
+    GetAssayData("data", "RNA") %>%
+    as.data.frame() %>%
+    t()
+rownames(sbs_mtx_oc) <- colnames(onecut)
+
+# Filter features
+filt_low_genes2 <-
+    colSums(sbs_mtx_oc) %>%
+    .[. > quantile(., 0.4)] %>%
+    names()
+sbs_mtx_oc %<>% .[, filt_low_genes2]
+
+min_filt_vector2 <-
+    sbs_mtx_oc %>%
+    as_tibble() %>%
+    select(all_of(filt_low_genes2)) %>%
+    summarise(across(.fns = ~ quantile(.x, .005))) %>%
+    as.list %>%
+    map(as.double) %>%
+    simplify %>%
+    .[filt_low_genes2]
+
+# Prepare table of intersection sets analysis
+content_sbs_mtx_oc <-
+    (sbs_mtx_oc > min_filt_vector2) %>%
+    as_tibble() %>%
+    mutate_all(as.numeric)
+
+
+onecut$gaba_status <-
+  content_sbs_mtx_oc %>%
+  select(Gad1, Gad2, Slc32a1) %>%
+  mutate(gaba = if_all(.fns = ~ .x > 0)) %>%
+  .$gaba
+
+onecut$gaba_occurs <-
+  content_sbs_mtx_oc %>%
+  select(Gad1, Gad2, Slc32a1) %>%
+  mutate(gaba = if_any(.fns = ~ .x > 0)) %>%
+  .$gaba
+
+onecut$glut_status <-
+  content_sbs_mtx_oc %>%
+  select(Slc17a6) %>%
+  mutate(glut = Slc17a6 > 0) %>%
+  .$glut
+
+oc_fin <-
+  subset(onecut,
+    cells = union(
+      WhichCells(onecut,
+        expression = gaba_status == TRUE & glut_status == FALSE),
+      WhichCells(onecut,
+        expression = glut_status == TRUE & gaba_occurs == FALSE)))
+
+oc_fin$status <- oc_fin$gaba_status %>%
+  if_else(true = "GABAergic",
+    false = "glutamatergic")
+Idents(oc_fin) <- "status"
+
+sbs_mtx_oc <-
+    oc_fin %>%
+    GetAssayData("data", "RNA") %>%
+    as.data.frame() %>%
+    t()
+rownames(sbs_mtx_oc) <- colnames(oc_fin)
+
+# Filter features
+filt_low_genes2 <-
+    colSums(sbs_mtx_oc) %>%
+    .[. > quantile(., 0.4)] %>%
+    names()
+sbs_mtx_oc %<>% .[, filt_low_genes2]
+
+min_filt_vector2 <-
+    sbs_mtx_oc %>%
+    as_tibble() %>%
+    select(all_of(filt_low_genes2)) %>%
+    summarise(across(.fns = ~ quantile(.x, .005))) %>%
+    as.list %>%
+    map(as.double) %>%
+    simplify %>%
+    .[filt_low_genes2]
+
+# Prepare table of intersection sets analysis
+content_sbs_mtx_oc <-
+    (sbs_mtx_oc > min_filt_vector2) %>%
+    as_tibble() %>%
+    mutate_all(as.numeric)
 
 ```
+
+```{r plot-upset-sbs-oc3}
+upset(as.data.frame(content_sbs_mtx_oc),
+  order.by = "freq",
+  sets.x.label = "Number of cells",
+  text.scale = c(2, 1.6, 2, 1.3, 2, 3),
+  nsets = 15,
+  sets = c("Gad1", "Gad2", "Slc32a1", "Slc17a6", "Onecut3"),
+  queries = list(
+    list(
+      query = intersects,
+      params = list("Gad1", "Gad2", "Slc32a1", "Onecut3"),
+      active = T
+    ),
+    list(
+      query = intersects,
+      params = list("Slc17a6", "Onecut3"),
+      active = T
+    )
+  ),
+  nintersects = 20,
+  empty.intersections = NULL
+)
+```
+
+```{r plot-upset-sbs-oc3-mod}
+upset(as.data.frame(content_sbs_mtx_oc),
+  order.by = "freq",
+  sets.x.label = "Number of cells",
+  text.scale = c(2, 1.6, 2, 1.3, 2, 3),
+  nsets = 15,
+  sets = c("Th", "Trh", "Slc32a1", "Slc17a6", "Onecut3"),
+  queries = list(
+    list(
+      query = intersects,
+      params = list("Th", "Slc32a1", "Onecut3"),
+      active = T
+    ),
+    list(
+      query = intersects,
+      params = list("Trh", "Slc17a6", "Onecut3"),
+      active = T
+    )
+  ),
+  nintersects = 20,
+  empty.intersections = NULL
+)
+```
+
+```{r plot-piecharts-sbs-oc3-chisqr, fig.height=10, fig.width=12}
+
+sbs_mtx_oc_full <- content_sbs_mtx_oc |> 
+  select(any_of(c(neurotrans, glutr, gabar, "Trh", "Th", "Onecut3"))) |> 
+  dplyr::bind_cols(oc_fin@meta.data)
+
+sbs_mtx_oc_full |> glimpse()
+
+sbs_mtx_oc_full$modulator <- 
+  sbs_mtx_oc_full %>%
+  select(Trh, Th) %>%
+  mutate(modulator = if_any(.fns = ~ .x > 0)) %>%
+  .$modulator
+
+sbs_mtx_oc_full$oc3 <- 
+  (sbs_mtx_oc_full$Onecut3 > 0)
+
+library(ggstatsplot)
+# for reproducibility
+set.seed(123)
+
+## plot
+# ggpiestats(
+#   data = sbs_mtx_oc_full,
+#   x = modulator,
+#   y = status,
+#   perc.k = 1,
+#   package = "ggsci",
+#   palette = "category10_d3",
+# ) + # further modification with `{ggplot2}` commands
+#   ggplot2::theme(
+#     plot.title = ggplot2::element_text(
+#       color = "black",
+#       size = 14,
+#       hjust = 0
+#     )
+#   )
+
+# plot
+grouped_ggpiestats(
+  # arguments relevant for `ggpiestats()`
+  data = sbs_mtx_oc_full,
+  x = modulator,
+  y = oc3,
+  grouping.var = status,
+  perc.k = 1,
+  package = "ggsci",
+  palette = "category10_d3",
+  # arguments relevant for `combine_plots()`
+  title.text = "Neuromodulator specification of onecut-driven hypothalamic neuronal lineages by Onecut3 and main neurotransmitter expression",
+  caption.text = "Asterisks denote results from proportion tests; \n***: p < 0.001, ns: non-significant",
+  plotgrid.args = list(nrow = 2)
+)
+```
+
