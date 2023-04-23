@@ -1,0 +1,844 @@
+---
+title: "Onecut3 affected cells"
+format:
+  html:
+    toc: true
+    df-print: paged
+    code-fold: true
+    fig.width: 14
+    fig.height: 12
+execute:
+  keep-md: false
+  echo: true
+  error: false
+  message: false
+  warning: false
+  debug: false
+knitr:
+  opts_chunk:
+    autodep: true
+    fig.align: center
+    tidy: true
+    tidy.opts: list(width.cutoff = 80, width = 80, indent = 2)
+    fig.retina: 2
+bibliography: references.bib
+---
+
+```{r setup, include = FALSE}
+DOCNAME <- "01-onecut3"
+NOW <- Sys.time()
+
+# Time chunks during knitting
+knitr::knit_hooks$set(timeit = function(before) {
+  if (before) {
+    print(paste("Start:", Sys.time()))
+    NOW <<- Sys.time()
+  } else {
+    print(paste("Stop:", Sys.time()))
+    print(Sys.time() - NOW)
+  }
+})
+
+knitr::knit_hooks$set(debug = function(before, options, envir) {
+  if (!before) {
+    message(
+      paste(names(envir), as.list(envir),
+        sep = " = ", collapse = "\n"
+      )
+    )
+  }
+})
+
+knitr::opts_chunk$set(
+  cache          = FALSE,
+  dev            = c("pdf", "png"),
+  timeit         = TRUE
+)
+
+if (!requireNamespace("BiocManager", quietly = TRUE)) {
+  install.packages("BiocManager")
+  BiocManager::install(c("Seurat", "R.utils", "satijalab/seurat-wrappers", "mojaveazure/seurat-disk", "saezlab/OmnipathR", "workflowr", "linxihui/NNLM", "yanwu2014/swne", "YuLab-SMU/ggtree", "pengminshi/mrtree", "glmpca", "scry", "scater", "scuttle", "miQC", "sjessa/ggmin", "glmGamPoi", "Nebulosa"))
+} else {
+  BiocManager::install("saezlab/OmnipathR")
+}
+```
+
+## Load data and setup parameters
+
+```{r libraries, cache=FALSE}
+# Load tidyverse infrastructure packages
+library(here)
+library(tidyverse)
+library(magrittr)
+library(future)
+library(furrr)
+
+# Load packages for scRNA-seq analysis and visualisation
+library(Seurat)
+library(SeuratWrappers)
+library(SeuratDisk)
+library(ggplot2)
+library(cowplot)
+library(UpSetR)
+library(patchwork)
+library(grid)
+library(Nebulosa)
+library(sctransform)
+library(OmnipathR)
+library(dnet)
+library(gprofiler2)
+```
+
+### Set paths
+
+```{r paths}
+src_dir <- here::here("code")
+data_dir <- here::here("data")
+output_dir <- here::here("outputs")
+plots_dir <- here::here(output_dir, "figures")
+tables_dir <- here::here(output_dir, "tables")
+```
+
+### Load helper functions and gene-sets
+
+```{r source, cache = FALSE}
+source(here::here(src_dir, "main.R"))
+source(here::here(src_dir, "load.R"))
+source(here::here(src_dir, "genes.R"))
+```
+
+### Set fixed variables
+
+```{r params-computation, cache = FALSE}
+# set seed
+reseed <- 42
+set.seed(seed = reseed)
+
+# available RAM in kB
+ram <- CheckRAM()
+
+# available cores
+n.cores <- AvailableCores(prop2use = .1)
+
+# Parameters for parallel execution
+plan("multisession", workers = n.cores)
+options(
+  future.globals.maxSize = ram,
+  future.rng.onMisuse = "ignore"
+)
+plan()
+# bpparam <- BiocParallel::MulticoreParam(workers = n.cores)
+```
+
+```{r params-analysis, cache = FALSE}
+# thresholds
+threshold.max.p.value <- 5e-3
+threshold.min.baseMean <- 1
+threshold.min.log2FoldChange <- 2
+
+# Params
+param.merged.vst.variable.features.n <- param.integrated.vst.variable.features.n <- 7000
+param.merged.vst.ncells <- param.integrated.vst.ncells <- 10000
+param.merged.vst.vars.to.regress <- param.integrated.vst.vars.to.regress <- c("log_umi_per_gene")
+param.merged.vst.return.only.var.genes <- param.integrated.vst.return.only.var.genes <- FALSE
+
+param.merged.dm.pcs.slct.pca.n <- param.integrated.dm.pcs.slct.pca <- 100
+param.merged.dm.pcs.slct.snn.dims <- param.integrated.dm.pcs.slct.snn <- 1:100
+param.merged.dm.pcs.slct.umap.dims <- param.integrated.dm.pcs.slct.umap.dims <- 1:100
+
+param.merged.dm.umap.reduction <- param.integrated.dm.umap.reduction <- "pca"
+param.merged.dm.umap.return.model <- param.integrated.dm.umap.return.model <- TRUE
+param.merged.dm.umap.slot <- param.integrated.dm.umap.slot <- "data"
+param.merged.dm.umap.umap.method <- param.integrated.dm.umap.umap.method <- "uwot"
+param.merged.dm.umap.reduction.model <- param.integrated.dm.umap.reduction.model <- NULL
+param.merged.dm.umap.return.model <- param.integrated.dm.umap.return.model <- FALSE
+param.merged.dm.umap.n.neighbors <- param.integrated.dm.umap.n.neighbors <- 30L
+param.merged.dm.umap.n.components <- param.integrated.dm.umap.n.components <- 2L
+param.merged.dm.umap.metric <- param.integrated.dm.umap.metric <- "cosine"
+
+param.sp.vst.variable.features.n <- 3000
+param.sp.vst.ncells <- 4000
+param.sp.vst.vars.to.regress <- c("log_umi_per_gene")
+param.sp.vst.return.only.var.genes <- FALSE
+param.sp.dm.pcs.slct.pca <- 30
+param.sp.dm.pcs.slct.snn <- 1:30
+param.sp.dm.pcs.slct.umap.dims <- 1:30
+param.sp.dm.umap.reduction <- "pca"
+param.sp.dm.umap.return.model <- TRUE
+param.sp.dm.umap.slot <- "data"
+param.sp.dm.umap.umap.method <- "uwot"
+param.sp.dm.umap.reduction.model <- NULL
+param.sp.dm.umap.return.model <- FALSE
+param.sp.dm.umap.n.neighbors <- 20L
+param.sp.dm.umap.n.components <- 2L
+param.sp.dm.umap.metric <- "cosine"
+
+# g1 <- 'Onecut2'
+# g2 <- 'Onecut3'
+
+# Subsets for Onecuts analysis
+subsets_df <-
+  tribble(
+    ~srtfile,                        ~subname,            ~subdescript,
+    #--|--|---
+    "rar2020.srt.neuro",             "neuro",             "Neuronal clusters",
+    "rar2020.srt.filt",              "filt",              "Filtered Neuronal clusters",
+    "rar2020.srt.mb.onecut.related", "mb.onecut.related", "Neuronal clusters probably related to Onecut3",
+    "rar2020.srt.published.onecuts", "published.onecuts", "Published Onecut2 and Onecut3 identified clusters",
+    "rar2020.srt.cont.oc2or3",       "cont.oc2or3",       "Onecut2 OR Onecut3 pls-subset from Neuronal clusters",
+    "rar2020.srt.cont.oc3",          "cont.oc3",          "Onecut3 pls-subset from Neuronal clusters"
+  )
+
+# Original clusters names for subsets
+# TODO rename for consistent format with table
+# [[I]] rewrite with do.call and strsplit or eval and parse to include all sets?
+rar2020.clusters.non.neuro <-
+  as.character(c(1, 2, 3, 4, 5, 6, 7, 8, 9, 38, 42, 45))
+rar2020.clusters.excl.draft <-
+  as.character(c(32, 23, 30, 25, 29, 43, 26, 31, 24))
+rar2020.clusters.incl.draft <-
+  as.character(c(18, 16, 14, 15, 17, 13, 12, 34, 36, 41))
+
+# Dev. Stages
+rar2020.ages.all <- c("E15", "E17", "P00", "P02", "P10", "P23")
+rar2020.ages.postnat <- c("P00", "P02", "P10", "P23")
+```
+
+### Load published Seurat-object from @romanov2020 and colour-code for consistency
+
+```{r load_sc-hypothalamus}
+samples_df <- read_tsv(here::here("data/samples.tsv"))
+rar2020.srt.pub <- readr::read_rds(file.path(data_dir, "oldCCA_nae_srt.rds"))
+rar2020.srt.pub %<>% UpdateSeuratObject()
+colnames(rar2020.srt.pub@reductions$umap@cell.embeddings) <- c("UMAP_1", "UMAP_2")
+colours <- readr::read_lines(here(data_dir, "colours_wtree.tsv"))
+clrlev <- levels(rar2020.srt.pub$wtree)
+names(colours) <- clrlev
+```
+
+### Load results of DESeq2 analysis of Onecut3 *in vitro* overexpression experiment in Neuro2A cell line
+
+```{r load_neuro2a}
+neuro2a <-
+  readr::read_csv(
+    here(
+      data_dir,
+      "neuro2a-onecut3-overexpression_rnaseq_deseq-global-contrast-gr.csv"
+    )
+  )
+```
+
+## Prepare data subsets
+
+Derive ages in Seurat object from cell names and mark postnatal stages
+
+```{r}
+rar2020.srt.pub$orig.ident <-
+  rar2020.srt.pub %>%
+  colnames() %>%
+  str_split(pattern = ":", simplify = TRUE) %>%
+  .[, 1] %>%
+  plyr::mapvalues(
+    x = .,
+    from = samples_df$fullname,
+    to = samples_df$sample
+  )
+rar2020.srt.pub$age <-
+  plyr::mapvalues(
+    x = rar2020.srt.pub$orig.ident,
+    from = samples_df$sample,
+    to = samples_df$age
+  )
+Idents(rar2020.srt.pub) <-
+  factor(rar2020.srt.pub$age,
+    levels  = rar2020.ages.all,
+    ordered = TRUE
+  )
+rar2020.srt.pub$age <- Idents(rar2020.srt.pub)
+rar2020.srt.pub$postnat <-
+  rar2020.srt.pub$age %in% rar2020.ages.postnat
+```
+
+Create subsets from Seurat object for exploratory analysis
+
+```{r create-subsets-eda}
+Idents(rar2020.srt.pub) <- "wtree"
+
+holder_srt <- subsets_df$srtfile %>%
+  map(c) %>%
+  setNames(subsets_df$srtfile)
+holder_srt_split <- subsets_df$srtfile %>%
+  map(c) %>%
+  setNames(subsets_df$srtfile)
+
+holder_srt[[1]] <- subsetSrt(
+  dat.srt = rar2020.srt.pub,
+  srt.name = subsets_df$subdescript[1],
+  idents = rar2020.clusters.non.neuro,
+  invert = TRUE
+)
+
+holder_srt[[5]] <- subset(x = holder_srt[[1]], subset = Onecut2 > 0 | Onecut3 > 0)
+holder_srt[[5]]@project.name <- subsets_df$subdescript[5]
+
+
+```
+
+Select most promising genes from *in vitro* Onecut3 over-expression experiment.
+
+```{r select-genes-neuro2a}
+neuro2a %>%
+  filter(
+    padj < threshold.max.p.value,
+    baseMean > threshold.min.baseMean,
+    log2FoldChange >= threshold.min.log2FoldChange
+  ) %>%
+  select(gene_name, baseMean, log2FoldChange, lfcSE, padj) %>%
+  arrange(-log2FoldChange) -> neuro2a.sub
+
+neuro2a.sub %>% knitr::kable()
+```
+
+Visualise selected genes for check on Seurat object
+
+```{r neuro2a-effect-plot}
+param.plot.1.repel.box.padding <- 0.5
+param.plot.1.filter.padj <- 0.01
+param.plot.1.filter.baseMean <- 1
+param.plot.1.point.colour.background <- "grey50"
+DESeq2 <- neuro2a %>%
+  select(gene_name, baseMean, log2FoldChange, lfcSE, padj) %>%
+  filter(padj < param.plot.1.filter.padj, baseMean > param.plot.1.filter.baseMean) %>%
+  mutate(gene_name = if_else(condition = gene_name %in% neuro2a.sub$gene_name, gene_name, "")) %>%
+  ggplot(., aes(log2(baseMean), log2FoldChange, label = gene_name)) +
+  geom_point(
+    data = neuro2a[!neuro2a$gene_name %in% neuro2a.sub$gene_name, ],
+    color = param.plot.1.point.colour.background
+  ) +
+  ggrepel::geom_text_repel(
+    box.padding = param.plot.1.repel.box.padding,
+    max.overlaps = Inf
+  ) +
+  geom_point(
+    data = neuro2a[neuro2a$gene_name %in% neuro2a.sub$gene_name, ],
+    color = "red"
+  ) +
+  labs(
+    title = "Neuro2A cells after Onecut3 overexpression",
+    subtitle = "Results of Differential Genes Expression Analysis",
+    caption = sprintf(
+      "Selected genes (red) with adjusted p-value < %s \n minimal expression value=%s and observed log2FoldChange value=%s",
+      threshold.max.p.value,
+      threshold.min.baseMean,
+      threshold.min.log2FoldChange
+    )
+  )
+cowplot::save_plot(
+  filename = paste0(plots_dir, "/plot_DEG_KI-N2a.pdf"),
+  plot = DESeq2,
+  base_height = 6
+)
+```
+
+```{r, echo=FALSE, fig.cap="Knit interactions, that explains KI experiment results"}
+knitr::include_graphics(here::here(plots_dir, "neuro2a-onecut3-ki-requested-genes.png"))
+
+```
+
+```{r plot-density-neuro2a-on-original-umap, fig.width=16, fig.height=24, dpi=300}
+n2a.top <- neuro2a.sub %>%
+  .[.$gene_name %in% rownames(GetAssayData(rar2020.srt.pub, slot = "scale.data")), ] %>%
+  .$gene_name %>%
+  .[-1]
+svFeaturePLOT <- function(gene) {
+  save_plot(
+    filename = paste0(plots_dir, "/plot_feature_", gene, ".pdf"),
+    plot = FeaturePlot(rar2020.srt.pub, features = gene),
+    base_height = 6
+  )
+}
+lapply(n2a.top, svFeaturePLOT)
+
+```
+
+```{r plot-density-Onecut3-neuro2a-on-original-umap, fig.width=16, fig.height=24, dpi=300}
+n2a.onecut3.plots <- n2a.top %>%
+  map(~ plot_density(rar2020.srt.pub, c("Onecut3", .x), joint = TRUE, combine = FALSE) %>% .[[length(.)]]) %>%
+  setNames(n2a.top)
+plt_combdens <- plot_grid(
+  plotlist = n2a.onecut3.plots,
+  ncol = 3,
+  byrow = TRUE
+)
+cowplot::save_plot(
+  filename = paste0(plots_dir, "/plot_DEG__KI-N2a_density_combined_wt_Onecut3.pdf"),
+  plot = plt_combdens,
+  base_height = 138,
+  base_width = 19.416,
+  limitsize = FALSE
+)
+```
+
+```{r plot-density-Onecut3-Onecut2-on-original-umap, fig.width=8, fig.height=18, dpi=200}
+p4 <- plot_density(rar2020.srt.pub, c("Onecut3", "Onecut2"), joint = TRUE)
+p4 + plot_layout(ncol = 1)
+
+cowplot::save_plot(
+  filename = paste0(plots_dir, "/plot_Onecut2_density_combined_wt_Onecut3.pdf"),
+  plot = p4 + plot_layout(ncol = 1),
+  base_height = 18,
+  base_width = 6.472,
+  limitsize = FALSE
+)
+```
+
+```{r plot-density-Onecut3-Ascl1-on-original-umap, fig.width=8, fig.height=18, dpi=200}
+p5 <- plot_density(rar2020.srt.pub, c("Onecut3", "Ascl1"), joint = TRUE)
+p5 + plot_layout(ncol = 1)
+
+cowplot::save_plot(
+  filename = paste0(plots_dir, "/plot_Ascl1_density_combined_wt_Onecut3.pdf"),
+  plot = p5 + plot_layout(ncol = 1),
+  base_height = 18,
+  base_width = 6.472,
+  limitsize = FALSE
+)
+```
+
+```{r plot-density-Onecut3-Slc32a1-on-original-umap, fig.width=8, fig.height=6, dpi=200}
+p_list <- plot_density(rar2020.srt.pub, c("Onecut3", "Slc32a1"), joint = TRUE, combine = FALSE)
+p_list[[length(p_list)]]
+cowplot::save_plot(
+  filename = paste0(plots_dir, "/plot_Slc32a1_density_combined_wt_Onecut3.pdf"),
+  plot = p_list[[length(p_list)]],
+  base_height = 6,
+  base_width = 6.472,
+  limitsize = FALSE
+)
+```
+
+```{r plot-density-Onecut3-Slc17a6-on-original-umap, cache = FALSE, fig.width=8, fig.height=6, dpi=200}
+p_list <- plot_density(rar2020.srt.pub, c("Onecut3", "Slc17a6"), joint = TRUE, combine = FALSE)
+p_list[[length(p_list)]]
+cowplot::save_plot(
+  filename = paste0(plots_dir, "/plot_Slc17a6_density_combined_wt_Onecut3.pdf"),
+  plot = p_list[[length(p_list)]],
+  base_height = 6,
+  base_width = 6.472,
+  limitsize = FALSE
+)
+```
+
+```{r plot-density-Trh-Cnr1-on-original-umap, cache = FALSE, fig.width=8, fig.height=6, dpi=200}
+p_list <- plot_density(rar2020.srt.pub, c("Onecut3", "Cnr1"), joint = TRUE, combine = FALSE)
+p_list[[length(p_list)]]
+```
+
+```{r plot-density-Onecut3-Th-on-original-umap, cache = FALSE, fig.width=8, fig.height=6, dpi=200}
+p_list <- plot_density(rar2020.srt.pub, c("Onecut3", "Th"), joint = TRUE, combine = FALSE)
+p_list[[length(p_list)]]
+cowplot::save_plot(
+  filename = paste0(plots_dir, "/plot_Th_density_combined_wt_Onecut3.pdf"),
+  plot = p_list[[length(p_list)]],
+  base_height = 6,
+  base_width = 6.472,
+  limitsize = FALSE
+)
+```
+
+```{r plot-density-Onecut3-Trh-on-original-umap, cache = FALSE, fig.width=8, fig.height=6, dpi=200}
+p_list <- plot_density(rar2020.srt.pub, c("Onecut3", "Trh"), joint = TRUE, combine = FALSE)
+p_list[[length(p_list)]]
+cowplot::save_plot(
+  filename = paste0(plots_dir, "/plot_Trh_density_combined_wt_Onecut3.pdf"),
+  plot = p_list[[length(p_list)]],
+  base_height = 6,
+  base_width = 6.472,
+  limitsize = FALSE
+)
+```
+
+
+```{r get_interaction_resources}
+get_interaction_resources()
+```
+
+
+```{r interactions_hs-1}
+interactions_hs <-
+  import_omnipath_interactions(resources = get_interaction_resources())
+```
+
+
+```{r interactions_hs-2}
+interactions_hs$source_genesymbol %>%
+  table() %>%
+  length()
+```
+
+
+```{r interactions_hs-3}
+interactions_hs$target_genesymbol %>%
+  table() %>%
+  length()
+```
+
+
+```{r interactions_mm-4}
+interactions_all_mm <- import_all_interactions(organism = 10090) ## 123477 interactions
+```
+
+
+```{r interactions_mm-5}
+interactions_all_mm$source_genesymbol %>%
+  table() %>%
+  length()
+```
+
+
+```{r interactions_mm-6}
+interactions_all_mm$target_genesymbol %>%
+  table() %>%
+  length()
+```
+
+
+```{r interactions_mm-7}
+print_interactions(head(interactions_all_mm))
+```
+
+
+```{r interactions_mm-8}
+(interactions_Onecut3 <- dplyr::filter(
+  interactions_all_mm,
+  source_genesymbol == "Onecut3" |
+    target_genesymbol == "Onecut3"
+))
+```
+
+
+```{r interactions_mm-9}
+(interactions_Onecut2 <- dplyr::filter(
+  interactions_all_mm,
+  source_genesymbol == "Onecut2" |
+    target_genesymbol == "Onecut2"
+))
+```
+
+
+```{r interactions_mm-10}
+(interactions_Onecut1 <- dplyr::filter(
+  interactions_all_mm,
+  source_genesymbol == "Onecut1" |
+    target_genesymbol == "Onecut1"
+))
+```
+
+
+```{r interactions_mm-11}
+(interactions_Nav1 <- dplyr::filter(
+  interactions_all_mm,
+  source_genesymbol == "Nav1" |
+    target_genesymbol == "Nav1"
+))
+```
+
+
+```{r interactions_mm-12}
+(interactions_Nav2 <- dplyr::filter(
+  interactions_all_mm,
+  source_genesymbol == "Nav2" |
+    target_genesymbol == "Nav2"
+))
+```
+
+
+```{r interactions_mm-13}
+## We transform the interactions data frame into a graph
+OPI_g <- interaction_graph(interactions = interactions_all_mm)
+```
+
+```{r all_shortest_paths-Onecut3-Nav1}
+print_path_vs(all_shortest_paths(OPI_g,
+  from = "Onecut1",
+  to = "Nav1"
+)$res, OPI_g)
+```
+
+```{r all_shortest_paths-Onecut2-Nav1}
+print_path_vs(all_shortest_paths(OPI_g,
+  from = "Onecut2",
+  to = "Nav1"
+)$res, OPI_g)
+```
+```{r shortest_paths-Onecut1-Nav1}
+print_path_es(shortest_paths(OPI_g,
+  from = "Onecut1", to = "Nav1",
+  output = "epath"
+)$epath[[1]], OPI_g)
+```
+
+
+```{r all_shortest_paths-Onecut1-Nav2}
+print_path_vs(all_shortest_paths(OPI_g,
+  from = "Onecut1",
+  to = "Nav2"
+)$res, OPI_g)
+```
+
+```{r all_shortest_paths-Onecut2-Nav2}
+print_path_vs(all_shortest_paths(OPI_g,
+  from = "Onecut2",
+  to = "Nav2"
+)$res, OPI_g)
+```
+```{r shortest_paths-Onecut1-Nav2}
+print_path_es(shortest_paths(OPI_g,
+  from = "Onecut1", to = "Nav2",
+  output = "epath"
+)$epath[[1]], OPI_g)
+```
+
+```{r interactions_all_hs-1}
+interactions_all_hs <- import_all_interactions() ## 164, 710
+```
+
+```{r interactions_all_hs-2}
+interactions_all_hs$source_genesymbol %>%
+  table() %>%
+  length()
+```
+
+```{r interactions_all_hs-3}
+interactions_all_hs$target_genesymbol %>%
+  table() %>%
+  length()
+```
+
+```{r interactions_all_hs-4}
+print_interactions(head(interactions_all_hs))
+```
+
+```{r interactions_all_hs-5}
+(interactions_Onecut3_hs <- dplyr::filter(
+  interactions_all_hs,
+  source_genesymbol == "ONECUT3" |
+    target_genesymbol == "ONECUT3"
+))
+```
+
+```{r interactions_all_hs-6}
+(interactions_Onecut2_hs <- dplyr::filter(
+  interactions_all_hs,
+  source_genesymbol == "ONECUT2" |
+    target_genesymbol == "ONECUT2"
+))
+```
+
+```{r interactions_all_hs-7}
+(interactions_Onecut1_hs <- dplyr::filter(
+  interactions_all_hs,
+  source_genesymbol == "ONECUT1" |
+    target_genesymbol == "ONECUT1"
+))
+```
+
+```{r interactions_all_hs-8}
+(interactions_Nav1_hs <- dplyr::filter(
+  interactions_all_hs,
+  source_genesymbol == "NAV1" |
+    target_genesymbol == "NAV1"
+))
+```
+
+```{r interactions_all_hs-9}
+(interactions_Nav2_hs <- dplyr::filter(
+  interactions_all_hs,
+  source_genesymbol == "NAV2" |
+    target_genesymbol == "NAV2"
+))
+```
+
+```{r interactions_all_hs-10}
+## We transform the interactions data frame into a graph
+OPI_g <- interaction_graph(interactions = interactions_all_hs)
+```
+
+
+```{r all_shortest_paths-ONECUT1-NAV2}
+print_path_vs(all_shortest_paths(OPI_g,
+  from = "ONECUT1",
+  to = "NAV2"
+)$res, OPI_g)
+```
+
+```{r all_shortest_paths-ONECUT2-NAV2}
+print_path_vs(all_shortest_paths(OPI_g,
+  from = "ONECUT2",
+  to = "NAV2"
+)$res, OPI_g)
+```
+
+```{r all_shortest_paths-ONECUT3-NAV2}
+print_path_vs(all_shortest_paths(OPI_g,
+  from = "ONECUT3",
+  to = "NAV2"
+)$res, OPI_g)
+```
+```{r shortest_paths-ONECUT1-NAV2}
+print_path_es(shortest_paths(OPI_g,
+  from = "ONECUT1", to = "NAV2",
+  output = "epath"
+)$epath[[1]], OPI_g)
+```
+
+```{r shortest_paths-ONECUT2-NAV2}
+print_path_es(shortest_paths(OPI_g,
+  from = "ONECUT2", to = "NAV2",
+  output = "epath"
+)$epath[[1]], OPI_g)
+```
+
+```{r shortest_paths-ONECUT3-NAV2}
+print_path_es(shortest_paths(OPI_g,
+  from = "ONECUT3", to = "NAV2",
+  output = "epath"
+)$epath[[1]], OPI_g)
+```
+
+```{r DEG_from_mm_dev_OC_positive_cells}
+Idents(object = holder_srt$rar2020.srt.neuro, cells = colnames(holder_srt$rar2020.srt.cont.oc2or3)) <- "OC"
+markOC3 <- FindMarkers(holder_srt$rar2020.srt.neuro, ident.1 = "OC", test.use = "MAST")
+markOC3 %>%
+  rownames_to_column(var = "gene") %>%
+  write_csv(x = ., file = paste0(tables_dir, "/DEG_from_mm_dev_OC_positive_cells.csv"), col_names = T)
+```
+
+```{r N2a_KI_Onecut3}
+select_to_test <- markOC3 %>%
+  filter(p_val_adj < 0.0001, avg_log2FC > 0) %>%
+  rownames_to_column(var = "gene") %>%
+  .$gene
+
+intersect_neuro2a <- neuro2a %>%
+  filter(significant == "yes", gene_name %in% c(select_to_test, "Nav1", "Nav2")) %>%
+  select(gene_name, log2FoldChange, padj) %>%
+  mutate(gene_name = str_to_upper(gene_name))
+intersect_neuro2a %>% write_csv(x = ., file = paste0(tables_dir, "/N2a_KI_Onecut3.csv"), col_names = F)
+
+```
+
+```{r svCorrDotPLOT-function}
+svCorrDotPLOT <- function(dat) {
+  selection <- markOC3 %>%
+    rownames_to_column(var = "gene") %>%
+    filter(
+      p_val_adj < 0.0000000001,
+      str_detect(string = gene, pattern = "^mt-", negate = T),
+      str_detect(string = gene, pattern = "^Gm", negate = T)
+    ) %>%
+    top_n(n = 40, wt = avg_log2FC) %>%
+    top_n(n = 20, wt = pct.1) %>%
+    dplyr::arrange(desc(pct.1)) %>%
+    .$gene
+  selection2 <- markOC3 %>%
+    rownames_to_column(var = "gene") %>%
+    filter(
+      p_val_adj < 0.0000000001,
+      str_detect(string = gene, pattern = "^mt-", negate = T),
+      str_detect(string = gene, pattern = "^Gm", negate = T)
+    ) %>%
+    top_n(n = 25, wt = p_val_adj) %>%
+    top_n(n = 20, wt = pct.1) %>%
+    top_n(n = 15, wt = avg_log2FC) %>%
+    dplyr::arrange(desc(pct.1)) %>%
+    .$gene
+
+  srt_onecut_filtered_ages <-
+    GetAssayData(dat, "data", "RNA") %>%
+    as.data.frame() %>%
+    t()
+  filt_age_oc_sum <-
+    colSums(srt_onecut_filtered_ages) %>%
+    .[. > 10] %>%
+    names() %>%
+    .[. %in% c(
+      selection,
+      "Onecut1",
+      "Onecut2",
+      "Onecut3"
+    )]
+  srt_onecut_filtered_ages %<>% .[, filt_age_oc_sum]
+
+  oc_age_corr_genes <- corrr::correlate(srt_onecut_filtered_ages)
+
+  oc3_age_corr_genes <-
+    oc_age_corr_genes %>%
+    arrange(-Onecut3) %>%
+    select(term, Onecut3, Onecut2)
+
+  threshold.min.pct.Onecut2 <- .3
+  threshold.min.pct.OC3 <- .3
+  threshold.max.pct.Onecut2 <- .95
+  threshold.max.pct.OC3 <- .95
+
+  oc3_age_corr_genes_intersect_2 <-
+    intersect(
+      x = oc3_age_corr_genes %>%
+        slice_min(
+          order_by = Onecut2,
+          prop = threshold.min.pct.Onecut2
+        ),
+      y = oc3_age_corr_genes %>%
+        slice_min(
+          order_by = Onecut3,
+          prop = threshold.max.pct.OC3
+        )
+    )
+  highlight_oc3_age_corr_genes <-
+    union(
+      oc3_age_corr_genes_intersect_2$term,
+      selection2
+    )
+  additional_genes <-
+    c(
+      "Onecut2", "Pias2", "Tp53", "Trio", "Fas", "Rhoa", "Limk1", "Vegfa", "Bcar1",
+      "Ywhab", "Nf1", "Eif4e", "Rb1", "Sp1", "Rps13", "Rps3a", "Traf6", "Fgfr1op",
+      "Ifi16", "Irf3", "Emg1", "Myc", "Pten", "Sirt1", "E2f1", "Nr0b2", "Crp", "Erg",
+      "Foxa1", "Spi1", "Nfkb1", "Nfkbia", "Pan2", "Eif4a1", "Gfra1", "Stat6", "Agt",
+      "Onecut1", "Grb2",
+      intersect_neuro2a$gene_name %>%
+        str_to_sentence()
+    ) %>%
+    .[!. %in% highlight_oc3_age_corr_genes] %>%
+    unique() %>%
+    .[. %in% rownames(dat)]
+  plot_dot_oc23_age_corr_genes <-
+    DotPlot(
+      dat,
+      assay = "RNA",
+      features = c(additional_genes, highlight_oc3_age_corr_genes),
+      group.by = "age"
+    ) + RotatedAxis()
+  save_plot(
+    filename = paste0(plots_dir, "/plot_dot_age_corrr_expression_wtin_OC23.pdf"),
+    plot = plot_dot_oc23_age_corr_genes,
+    base_height = 6,
+    base_aspect_ratio = 2
+  )
+
+  return(highlight_oc3_age_corr_genes)
+}
+
+# oc_list <- Seurat::SplitObject(holder_srt$rar2020.srt.cont.oc2or3, split.by = "age")
+
+```
+
+```{r svCorrDotPLOT}
+svCorrDotPLOT(holder_srt$rar2020.srt.cont.oc2or3)
+```
+
+
+```{r cache=FALSE}
+sessioninfo::session_info()
+```

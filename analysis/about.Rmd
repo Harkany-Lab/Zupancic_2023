@@ -7,4 +7,28 @@ editor_options:
   chunk_output_type: console
 ---
 
-Describe your project.
+# Glutamate and GABA neurons share cascading Onecut3/NAV2-driven differentiation trajectories in the developing hypothalamus
+
+This repository contains code and output of the analysis of single-nuclei
+RNA sequencing data for the article [Zupancic M et al., 2023][publication].
+
+Please see file `CITATION` in the root of your Git repo that contains
+the citation information.
+
+To see the results of the analysis please visit
+the [analysis website][website]
+
+## Rationale:
+
+Differentiation trajectories to generate specialized cellular features rely on sets of transcription factors (TFs) whose temporal dynamics and coexistence underlie morphological and neurochemical divergence among neurons and neuroendocrine cells. Even though transcriptional programs were extensively studied in the developing nervous system, the coupling of TFs to effector gene networks that time and shape the morphogenesis of these polarized cells is less known.
+
+## Results:
+
+Here, we make the curious observation that evolutionarily conserved Onecut3, a subordinate in the Onecut TF family known to control fate selection in progenitors, is instead expressed in fate-restricted neuroblasts in the vertebrate hypothalamus. In particular, a pool of Ascl1-containing progenitors in the midgestational mouse hypothalamus gives rise to both GABA and glutamate neurons destined to the periventricular and lateral hypothalamus, respectively, which uniformly upregulate Onecut3 only when exiting the proliferative zone of the 3rd ventricle. By combining single-cell RNA-seq, genetic Onecut3 reporters, gain-of-function models in vitro, and loss-of-function analysis in early developing mice and C. elegans, we identify that Onecut3 instructs neuronal differentiation and maturation, through a Navigator-2 pathway to modulate neuritogenesis and leading process motility.
+
+## Conclusion:
+
+Onecut3 executes an unexpected function by inducing cytoskeletal modifications of key importance for neuronal maturation and network integration during the morphogenesis of many neuronal phenotypes in the vertebrate hypothalamus.
+
+[publication]: https://doi.org/ "Zupancic M et al., 2023"
+[website]: https://harkany-lab.github.io/Zupancic_2023/index.html "Analysis website"

@@ -3,14 +3,22 @@ output_dir: ../docs
 navbar:
   title: "Zupancic_2022"
   left:
-  - text: Home
-    href: index.html
-  - text: Glutamate and GABA dynamic in Onecut3 neurons
-    href: dynamic_oc3-pop.html
-  - text: About
-    href: about.html
-  - text: License
-    href: license.html
+    - text: Home
+      href: index.html
+    - text: "Analysis"
+      menu:
+        - text: Glutamate and GABA dynamic in Onecut3 neurons
+          href: dynamic_oc3-pop.html
+        - text: Onecut3 affected cells
+          href: onecuts-affected-cells.html
+        - text: Glutamate and GABA dynamic in LHA Onecut3 neurons
+          href: onecut3wotrh.html
+        - text: Glutamate and GABA dynamic in LHA neurons
+          href: onecut.html
+    - text: About
+      href: about.html
+    - text: License
+      href: license.html
 output:
   workflowr::wflow_html:
     toc: yes
